@@ -30,7 +30,7 @@ export async function loadFindingsForOrganization(
   if (relationshipError) throw relationshipError;
   if (!relationships.length) return [];
   const { data: findings, error } = await supabase
-    .from("findings")
+    .from("findings_visible")
     .select("*")
     .in(
       "supplier_relationship_id",
@@ -61,7 +61,7 @@ export async function loadFindingDetail(
   findingId: string,
 ): Promise<FindingDetailData> {
   const { data: finding, error } = await supabase
-    .from("findings")
+    .from("findings_visible")
     .select("*")
     .eq("id", findingId)
     .single();

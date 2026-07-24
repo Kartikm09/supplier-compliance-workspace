@@ -34,6 +34,11 @@ type Table<Row extends object> = {
   Update: Partial<Row> & Record<string, unknown>;
 };
 
+type View<Row extends object> = {
+  Relationships: [];
+  Row: Row & Record<string, unknown>;
+};
+
 export interface Database {
   __InternalSupabase: {
     PostgrestVersion: "14.5";
@@ -132,7 +137,12 @@ export interface Database {
       supplier_profiles: Table<SupplierProfile>;
       supplier_relationships: Table<SupplierRelationship>;
     };
-    Views: { [_ in never]: never };
+    Views: {
+      approval_decisions_visible: View<ApprovalDecision>;
+      document_reviews_visible: View<DocumentReview>;
+      findings_visible: View<Finding>;
+      risk_evaluations_visible: View<RiskEvaluation>;
+    };
   };
 }
 

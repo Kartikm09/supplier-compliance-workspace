@@ -261,11 +261,6 @@ code {
   border-top: 1px solid rgb(255 255 255 / 9%);
 }
 
-.sidebar__close,
-.topbar__menu {
-  display: none;
-}
-
 .sidebar-backdrop {
   display: none;
 }
@@ -404,6 +399,11 @@ code {
   flex-basis: 28px;
   width: 28px;
   height: 28px;
+}
+
+.icon-button.sidebar__close,
+.icon-button.topbar__menu {
+  display: none;
 }
 
 .page {
@@ -2424,8 +2424,8 @@ progress::-moz-progress-bar {
     transform: translateX(0);
   }
 
-  .sidebar__close,
-  .topbar__menu {
+  .icon-button.sidebar__close,
+  .icon-button.topbar__menu {
     display: inline-grid;
   }
 

@@ -32,6 +32,17 @@ export const WorkspaceContext = createContext<WorkspaceContextValue | null>(
   null,
 );
 
+export function resolveSelectedMembership(
+  memberships: MembershipWithOrganization[],
+  selectedId: string,
+): MembershipWithOrganization | null {
+  return (
+    memberships.find((item) => item.organization_id === selectedId) ??
+    memberships[0] ??
+    null
+  );
+}
+
 export function WorkspaceProvider({ children }: PropsWithChildren) {
   const { user } = useAuth();
   const [selectedId, setSelectedId] = useState(
@@ -43,18 +54,15 @@ export function WorkspaceProvider({ children }: PropsWithChildren) {
     enabled: Boolean(user),
   });
   const memberships = query.data ?? [];
+  const membership = resolveSelectedMembership(memberships, selectedId);
 
   useEffect(() => {
-    if (!memberships.length) return;
-    if (!memberships.some((item) => item.organization_id === selectedId)) {
-      const fallback = memberships[0]?.organization_id ?? "";
-      setSelectedId(fallback);
-      window.localStorage.setItem(storageKey, fallback);
+    if (membership && membership.organization_id !== selectedId) {
+      setSelectedId(membership.organization_id);
+      window.localStorage.setItem(storageKey, membership.organization_id);
     }
-  }, [memberships, selectedId]);
+  }, [membership, selectedId]);
 
-  const membership =
-    memberships.find((item) => item.organization_id === selectedId) ?? null;
   const value = useMemo<WorkspaceContextValue>(
     () => ({
       error: query.error,

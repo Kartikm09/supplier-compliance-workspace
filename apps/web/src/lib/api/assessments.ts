@@ -197,22 +197,22 @@ export async function loadAssessmentWorkspace(
       .eq("supplier_relationship_id", assessment.supplier_relationship_id)
       .order("updated_at", { ascending: false }),
     supabase
-      .from("findings")
+      .from("findings_visible")
       .select("*")
       .eq("assessment_id", assessmentId)
       .order("finding_number"),
     supabase
-      .from("risk_evaluations")
+      .from("risk_evaluations_visible")
       .select("*")
       .eq("assessment_id", assessmentId)
       .order("calculated_at", { ascending: false }),
     supabase
-      .from("approval_decisions")
+      .from("approval_decisions_visible")
       .select("*")
       .eq("assessment_id", assessmentId)
       .order("decided_at", { ascending: false }),
     supabase
-      .from("document_reviews")
+      .from("document_reviews_visible")
       .select("*")
       .eq("assessment_id", assessmentId)
       .order("created_at", { ascending: false }),

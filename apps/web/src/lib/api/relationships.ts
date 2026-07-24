@@ -113,7 +113,7 @@ export async function loadRelationshipDetail(
       .eq("supplier_relationship_id", relationshipId)
       .order("created_at", { ascending: false }),
     supabase
-      .from("findings")
+      .from("findings_visible")
       .select("*")
       .eq("supplier_relationship_id", relationshipId)
       .order("raised_at", { ascending: false }),
@@ -146,7 +146,7 @@ export async function loadRelationshipDetail(
   );
   const approvalResult = assessmentIds.length
     ? await supabase
-        .from("approval_decisions")
+        .from("approval_decisions_visible")
         .select("*")
         .in("assessment_id", assessmentIds)
         .order("decided_at", { ascending: false })
@@ -195,7 +195,7 @@ export async function loadDashboard(
       .in("supplier_relationship_id", relationshipIds)
       .order("updated_at", { ascending: false }),
     supabase
-      .from("findings")
+      .from("findings_visible")
       .select("*")
       .in("supplier_relationship_id", relationshipIds)
       .order("raised_at", { ascending: false }),
