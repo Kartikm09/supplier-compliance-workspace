@@ -37,6 +37,17 @@ MERMAID_TYPES = {
     "stateDiagram-v2",
     "erDiagram",
 }
+IGNORED_TREE_NAMES = {"artifacts", "dist", "node_modules", "report"}
+
+
+def project_markdown_files(directory: Path) -> list[Path]:
+    """Return authored Markdown while excluding dependencies and generated output."""
+
+    return [
+        path
+        for path in directory.rglob("*.md")
+        if not IGNORED_TREE_NAMES.intersection(path.relative_to(ROOT).parts)
+    ]
 
 
 def github_slug(value: str) -> str:
@@ -259,8 +270,8 @@ def main() -> int:
     csv_files = sorted(FIXTURES.glob("*.csv"))
     markdown_files = sorted(
         [ROOT / name for name in ROOT_DOCUMENTS]
-        + list((ROOT / "docs").rglob("*.md"))
-        + list((ROOT / "tests").rglob("*.md"))
+        + project_markdown_files(ROOT / "docs")
+        + project_markdown_files(ROOT / "tests")
     )
 
     parsed_json = validate_json(json_files, errors)

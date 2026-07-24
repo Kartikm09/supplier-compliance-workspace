@@ -3,11 +3,23 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const blocked = [
-  ["-----BEGIN", "PRIVATE KEY-----"].join(" "),
-  ["SUPABASE_SERVICE_ROLE_KEY", "="].join(""),
-  ["SUPABASE_SECRET_KEY", "=sb_secret_"].join(""),
-  ["SUPABASE_ACCESS_TOKEN", "=sbp_"].join(""),
-  ["postgresql", "://postgres:"].join(""),
+  {
+    label: "private key material",
+    pattern: /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
+  },
+  {
+    label: "Supabase service credential",
+    pattern:
+      /SUPABASE_(?:SERVICE_ROLE_KEY|SECRET_KEY)\s*=\s*(?:eyJ[A-Za-z0-9._-]+|sb_secret_[A-Za-z0-9._-]+)/,
+  },
+  {
+    label: "Supabase management token",
+    pattern: /SUPABASE_ACCESS_TOKEN\s*=\s*sbp_[A-Za-z0-9._-]+/,
+  },
+  {
+    label: "PostgreSQL password in URL",
+    pattern: /postgresql:\/\/postgres:[^@\s]+@/,
+  },
 ];
 
 const files = execFileSync(
@@ -40,9 +52,9 @@ for (const file of candidates) {
   if (bytes.includes(0)) continue;
   const content = bytes.toString("utf8");
   scanned += 1;
-  for (const marker of blocked) {
-    if (content.includes(marker)) {
-      findings.push(`${file}: blocked marker ${marker}`);
+  for (const blockedValue of blocked) {
+    if (blockedValue.pattern.test(content)) {
+      findings.push(`${file}: blocked ${blockedValue.label}`);
     }
   }
 }

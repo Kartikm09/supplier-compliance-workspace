@@ -1,0 +1,15 @@
+{
+  "name": "@scw/e2e",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:desktop": "playwright test --project=desktop-chromium",
+    "test:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "typescript": "6.0.3"
+  }
+}
