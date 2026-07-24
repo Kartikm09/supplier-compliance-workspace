@@ -2,7 +2,11 @@ import { parseCreateDocumentUpload } from "../_shared/contracts.ts";
 import { AppError } from "../_shared/errors.ts";
 import { handleRequest, jsonResponse, readJson } from "../_shared/http.ts";
 import { callRpc, omitSensitive, singleRecord } from "../_shared/rpc.ts";
-import { assertEvidenceStoragePath, EVIDENCE_BUCKET } from "../_shared/storage.ts";
+import {
+  assertEvidenceStoragePath,
+  EVIDENCE_BUCKET,
+  publicStorageUrl,
+} from "../_shared/storage.ts";
 import { requireUser, userClient } from "../_shared/supabase.ts";
 import { requiredUuid } from "../_shared/validation.ts";
 
@@ -65,7 +69,7 @@ export async function createDocumentUpload(request: Request): Promise<Response> 
         reservation: omitSensitive(reservation),
         upload: {
           path: upload.path,
-          signed_url: upload.signedUrl,
+          signed_url: publicStorageUrl(upload.signedUrl),
           token: upload.token,
           expires_in_seconds: 7_200,
         },

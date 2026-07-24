@@ -1,7 +1,11 @@
 import { parseGetSignedDocumentUrl } from "../_shared/contracts.ts";
 import { AppError, fromDatabaseError } from "../_shared/errors.ts";
 import { handleRequest, jsonResponse, readJson } from "../_shared/http.ts";
-import { EVIDENCE_BUCKET, parseDocumentVersionRecord } from "../_shared/storage.ts";
+import {
+  EVIDENCE_BUCKET,
+  parseDocumentVersionRecord,
+  publicStorageUrl,
+} from "../_shared/storage.ts";
 import { requireUser, userClient } from "../_shared/supabase.ts";
 
 export async function getSignedDocumentUrl(request: Request): Promise<Response> {
@@ -43,7 +47,7 @@ export async function getSignedDocumentUrl(request: Request): Promise<Response> 
       request,
       {
         document_version_id: documentVersion.id,
-        signed_url: signed.signedUrl,
+        signed_url: publicStorageUrl(signed.signedUrl),
         expires_in_seconds: input.expiresInSeconds,
         correlation_id: correlationId,
       },

@@ -27,6 +27,14 @@ export interface QueueResult {
   processed: number;
 }
 
+function queueResourceField(queue: ComplianceQueue): string {
+  return queue === "document_processing"
+    ? "document_version_id"
+    : queue === "notification_delivery"
+    ? "notification_id"
+    : "assessment_id";
+}
+
 export function parseQueueMessage(value: unknown): QueueMessage {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error("Queue message is malformed.");
@@ -58,11 +66,7 @@ export function jobPayload(
       /^[0-9a-f-]{36}$/i.test(suppliedCorrelationId)
     ? suppliedCorrelationId
     : fallbackCorrelationId;
-  const field = queue === "document_processing"
-    ? "document_version_id"
-    : queue === "notification_delivery"
-    ? "notification_id"
-    : "assessment_id";
+  const field = queueResourceField(queue);
   return {
     [field]: requiredUuid(message.message[field], field),
     correlation_id: correlationId,
@@ -119,6 +123,17 @@ function recordValue(value: unknown, label: string): Record<string, unknown> {
   return value as Record<string, unknown>;
 }
 
+export function supplierSafeReportFindings(
+  rows: Array<Record<string, unknown>>,
+): Array<Record<string, unknown>> {
+  return rows.map((row) => ({
+    finding_number: row.finding_number,
+    severity: row.severity,
+    title: row.title,
+    status: row.status,
+  }));
+}
+
 async function singleRow(
   client: SupabaseClient,
   table: string,
@@ -141,15 +156,17 @@ async function singleRow(
   return recordValue(data, table);
 }
 
-function jobMetadata(
+export function jobMetadata(
   queue: ComplianceQueue,
   message: QueueMessage,
   correlationId: string,
 ): Record<string, unknown> {
+  const resourceField = queueResourceField(queue);
+  const resourceId = requiredUuid(message.message[resourceField], resourceField);
   return {
     attempt: Math.max(1, message.read_ct),
     correlation_id: correlationId,
-    job_id: `${queue}:${message.msg_id}`,
+    job_id: `${queue}:${message.msg_id}:${resourceId}`,
   };
 }
 
@@ -462,7 +479,7 @@ async function processReportJob(
         status: row.status,
         expiry_date: versionById.get(row.current_version_id) ?? null,
       })),
-      findings: findingResult.data ?? [],
+      findings: supplierSafeReportFindings(findingResult.data ?? []),
       corrective_action_status: correctiveActions?.[0]?.status ?? null,
       decision: decisions?.[0]?.decision ?? null,
       generated_at: assessment.updated_at,

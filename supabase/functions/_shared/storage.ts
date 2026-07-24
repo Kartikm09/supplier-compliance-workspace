@@ -6,6 +6,26 @@ export const EVIDENCE_BUCKET = "supplier-evidence";
 export const REPORT_BUCKET = "assessment-reports";
 export const MAX_EVIDENCE_BYTES = 10 * 1024 * 1024;
 
+export function publicStorageUrl(
+  signedUrl: string,
+  publicSupabaseUrl = Deno.env.get("PUBLIC_SUPABASE_URL"),
+): string {
+  if (!publicSupabaseUrl) return signedUrl;
+  try {
+    const signed = new URL(signedUrl);
+    const external = new URL(publicSupabaseUrl);
+    signed.protocol = external.protocol;
+    signed.host = external.host;
+    return signed.toString();
+  } catch {
+    throw new AppError(
+      500,
+      "invalid_storage_configuration",
+      "The public Storage URL is not configured correctly.",
+    );
+  }
+}
+
 export interface DocumentVersionRecord {
   id: string;
   storage_path: string;
@@ -82,8 +102,12 @@ export async function verifyDocumentBlob(
   if (blob.size > MAX_EVIDENCE_BYTES) {
     throw new AppError(413, "file_too_large", "The uploaded file exceeds the permitted size.");
   }
-  const observedMime = blob.type || "application/octet-stream";
-  if (observedMime !== "application/octet-stream" && observedMime !== expected.mime_type) {
+  const observedMime = (blob.type || "application/octet-stream")
+    .split(";", 1)[0]
+    ?.trim()
+    .toLowerCase();
+  const expectedMime = expected.mime_type.trim().toLowerCase();
+  if (observedMime !== "application/octet-stream" && observedMime !== expectedMime) {
     throw new AppError(
       422,
       "mime_type_mismatch",
