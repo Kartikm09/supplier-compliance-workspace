@@ -1,0 +1,13 @@
+DEMONSTRATION DATA - NOT A REAL DOCUMENT
+
+FICTIONAL QUALITY MANAGEMENT CERTIFICATE
+
+Organization: Nova Plastics Demonstration Ltd.
+Fictional certificate reference: DEMO-QMS-NOVA-V2
+Issue date: 2026-02-08
+Expiry date: 2027-02-08
+Scope: Demonstration production and quality-control workflow
+Status: Replacement version for synthetic review
+
+This file replaces the first fictional certificate without overwriting its
+history. It is not accredited and has no legal or commercial validity.

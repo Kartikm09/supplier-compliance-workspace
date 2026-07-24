@@ -1,0 +1,116 @@
+{
+  "cases": [
+    {
+      "case_key": "buyer_reads_own_relationship",
+      "actor_user_id": "10000000-0000-4000-8000-000000000003",
+      "resource_type": "assessment",
+      "resource_id": "60000000-0000-4000-8000-000000000001",
+      "action": "select",
+      "expected_outcome": "allow"
+    },
+    {
+      "case_key": "nova_reads_own_assessment",
+      "actor_user_id": "10000000-0000-4000-8000-000000000005",
+      "resource_type": "assessment",
+      "resource_id": "60000000-0000-4000-8000-000000000001",
+      "action": "select",
+      "expected_outcome": "allow"
+    },
+    {
+      "case_key": "greenline_cannot_read_nova_assessment",
+      "actor_user_id": "10000000-0000-4000-8000-000000000006",
+      "resource_type": "assessment",
+      "resource_id": "60000000-0000-4000-8000-000000000001",
+      "action": "select",
+      "expected_outcome": "deny"
+    },
+    {
+      "case_key": "greenline_reads_own_assessment",
+      "actor_user_id": "10000000-0000-4000-8000-000000000006",
+      "resource_type": "assessment",
+      "resource_id": "60000000-0000-4000-8000-000000000002",
+      "action": "select",
+      "expected_outcome": "allow"
+    },
+    {
+      "case_key": "nova_cannot_read_greenline_assessment",
+      "actor_user_id": "10000000-0000-4000-8000-000000000005",
+      "resource_type": "assessment",
+      "resource_id": "60000000-0000-4000-8000-000000000002",
+      "action": "select",
+      "expected_outcome": "deny"
+    },
+    {
+      "case_key": "meridian_viewer_cannot_read_apex_nova_assessment",
+      "actor_user_id": "10000000-0000-4000-8000-000000000007",
+      "resource_type": "assessment",
+      "resource_id": "60000000-0000-4000-8000-000000000001",
+      "action": "select",
+      "expected_outcome": "deny"
+    },
+    {
+      "case_key": "supplier_cannot_read_internal_finding_note",
+      "actor_user_id": "10000000-0000-4000-8000-000000000005",
+      "resource_type": "finding_internal_note",
+      "resource_id": "80000000-0000-4000-8000-000000000001",
+      "action": "select",
+      "expected_outcome": "deny_and_omit_field"
+    },
+    {
+      "case_key": "supplier_cannot_read_risk_breakdown",
+      "actor_user_id": "10000000-0000-4000-8000-000000000004",
+      "resource_type": "risk_scoring_breakdown",
+      "resource_id": "82000000-0000-4000-8000-000000000001",
+      "action": "select",
+      "expected_outcome": "deny_and_omit_field"
+    },
+    {
+      "case_key": "contributor_cannot_submit_final_assessment",
+      "actor_user_id": "10000000-0000-4000-8000-000000000005",
+      "resource_type": "assessment",
+      "resource_id": "60000000-0000-4000-8000-000000000001",
+      "action": "submit_without_explicit_grant",
+      "expected_outcome": "deny"
+    },
+    {
+      "case_key": "reviewer_cannot_record_final_decision",
+      "actor_user_id": "10000000-0000-4000-8000-000000000003",
+      "resource_type": "approval_decision",
+      "resource_id": "83000000-0000-4000-8000-000000000001",
+      "action": "insert",
+      "expected_outcome": "deny"
+    },
+    {
+      "case_key": "greenline_cannot_sign_nova_document",
+      "actor_user_id": "10000000-0000-4000-8000-000000000006",
+      "resource_type": "document_version",
+      "resource_id": "71000000-0000-4000-8000-000000000003",
+      "action": "create_signed_url",
+      "expected_outcome": "deny"
+    },
+    {
+      "case_key": "suspended_meridian_relationship_blocks_nova",
+      "actor_user_id": "10000000-0000-4000-8000-000000000004",
+      "resource_type": "supplier_relationship",
+      "resource_id": "40000000-0000-4000-8000-000000000003",
+      "action": "mutate_assessment",
+      "expected_outcome": "deny"
+    },
+    {
+      "case_key": "ordinary_user_cannot_insert_audit_event",
+      "actor_user_id": "10000000-0000-4000-8000-000000000002",
+      "resource_type": "audit_event",
+      "resource_id": "92000000-0000-4000-8000-000000000001",
+      "action": "insert_directly",
+      "expected_outcome": "deny"
+    },
+    {
+      "case_key": "user_cannot_promote_own_role",
+      "actor_user_id": "10000000-0000-4000-8000-000000000005",
+      "resource_type": "organization_membership",
+      "resource_id": "30000000-0000-4000-8000-000000000005",
+      "action": "update_role_to_supplier_owner",
+      "expected_outcome": "deny"
+    }
+  ]
+}

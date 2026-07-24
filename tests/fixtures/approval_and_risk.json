@@ -1,0 +1,42 @@
+{
+  "risk_evaluation": {
+    "id": "82000000-0000-4000-8000-000000000001",
+    "assessment_id": "60000000-0000-4000-8000-000000000001",
+    "calculation_version": 1,
+    "total_score": 22,
+    "risk_level": "medium",
+    "scoring_breakdown": {
+      "company_information": 0,
+      "quality_and_delivery": 10,
+      "security_and_continuity": 6,
+      "environmental_practices": 6,
+      "explanation": "Deterministic fictional scoring used only for test assertions."
+    },
+    "calculated_at": "2026-02-10T15:30:00Z",
+    "calculated_by_type": "rules_engine",
+    "supplier_visible": false
+  },
+  "approval_decision": {
+    "id": "83000000-0000-4000-8000-000000000001",
+    "assessment_id": "60000000-0000-4000-8000-000000000001",
+    "buyer_organization_id": "20000000-0000-4000-8000-000000000001",
+    "decision": "conditionally_approved",
+    "effective_from": "2026-02-12",
+    "valid_until": "2027-02-11",
+    "conditions": "Provide the next fictional quarterly quality-review summary by 2026-05-15.",
+    "internal_rationale": "Buyer-only fixture: medium deterministic score with verified corrective action.",
+    "decided_by": "10000000-0000-4000-8000-000000000001",
+    "decided_at": "2026-02-11T16:00:00Z"
+  },
+  "supplier_safe_decision": {
+    "assessment_id": "60000000-0000-4000-8000-000000000001",
+    "decision": "conditionally_approved",
+    "effective_from": "2026-02-12",
+    "valid_until": "2027-02-11",
+    "conditions": "Provide the next fictional quarterly quality-review summary by 2026-05-15."
+  },
+  "supplier_must_not_receive": [
+    "risk_evaluation.scoring_breakdown",
+    "approval_decision.internal_rationale"
+  ]
+}

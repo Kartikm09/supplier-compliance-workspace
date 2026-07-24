@@ -1,0 +1,75 @@
+{
+  "assessment": {
+    "id": "60000000-0000-4000-8000-000000000001",
+    "supplier_relationship_id": "40000000-0000-4000-8000-000000000001",
+    "qualification_program_id": "50000000-0000-4000-8000-000000000001",
+    "program_version_id": "51000000-0000-4000-8000-000000000001",
+    "assigned_supplier_user_id": "10000000-0000-4000-8000-000000000005",
+    "assigned_buyer_reviewer_id": "10000000-0000-4000-8000-000000000003",
+    "started_at": "2026-02-03T09:00:00Z"
+  },
+  "isolation_assessment": {
+    "id": "60000000-0000-4000-8000-000000000002",
+    "supplier_relationship_id": "40000000-0000-4000-8000-000000000002",
+    "qualification_program_id": "50000000-0000-4000-8000-000000000001",
+    "program_version_id": "51000000-0000-4000-8000-000000000001",
+    "status": "in_progress",
+    "assigned_supplier_user_id": "10000000-0000-4000-8000-000000000006",
+    "assigned_buyer_reviewer_id": "10000000-0000-4000-8000-000000000003",
+    "started_at": "2026-02-06T09:00:00Z",
+    "purpose": "Positive control for Greenline access and negative control for Nova access."
+  },
+  "stages": [
+    {
+      "sequence": 1,
+      "status": "in_progress",
+      "at": "2026-02-03T09:00:00Z",
+      "completeness_percentage": 83,
+      "note": "Required environmental-policy answer is intentionally missing."
+    },
+    {
+      "sequence": 2,
+      "status": "in_progress",
+      "at": "2026-02-05T10:00:00Z",
+      "command": "submit_assessment",
+      "expected_outcome": "rejected",
+      "expected_error_code": "ASSESSMENT_INCOMPLETE",
+      "missing_question_ids": [
+        "53000000-0000-4000-8000-000000000006"
+      ]
+    },
+    {
+      "sequence": 3,
+      "status": "submitted",
+      "at": "2026-02-05T11:00:00Z",
+      "command": "submit_assessment",
+      "expected_outcome": "accepted",
+      "completeness_percentage": 100,
+      "submission_number": 1
+    },
+    {
+      "sequence": 4,
+      "status": "under_review",
+      "at": "2026-02-06T09:00:00Z",
+      "actor_user_id": "10000000-0000-4000-8000-000000000003"
+    },
+    {
+      "sequence": 5,
+      "status": "changes_requested",
+      "at": "2026-02-06T14:00:00Z",
+      "reason": "Replacement evidence and corrective response requested."
+    },
+    {
+      "sequence": 6,
+      "status": "resubmitted",
+      "at": "2026-02-09T10:00:00Z",
+      "submission_number": 2
+    },
+    {
+      "sequence": 7,
+      "status": "conditionally_approved",
+      "at": "2026-02-11T16:00:00Z",
+      "decision_id": "83000000-0000-4000-8000-000000000001"
+    }
+  ]
+}

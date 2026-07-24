@@ -1,0 +1,5 @@
+id,organization_type,legal_name,display_name,slug,country_code,status,created_by,created_at
+20000000-0000-4000-8000-000000000001,buyer,Apex Components Group Demonstration Entity,Apex Components Group,apex-components-group,DE,active,10000000-0000-4000-8000-000000000001,2026-01-10T09:00:00Z
+20000000-0000-4000-8000-000000000002,supplier,Nova Plastics Demonstration Ltd.,Nova Plastics Ltd.,nova-plastics,NL,active,10000000-0000-4000-8000-000000000004,2026-01-12T10:00:00Z
+20000000-0000-4000-8000-000000000003,supplier,Greenline Packaging Demonstration Works,Greenline Packaging Works,greenline-packaging,BE,active,10000000-0000-4000-8000-000000000006,2026-01-13T10:00:00Z
+20000000-0000-4000-8000-000000000004,buyer,Meridian Buyer Sandbox Entity,Meridian Buyer Sandbox,meridian-buyer-sandbox,FR,active,10000000-0000-4000-8000-000000000007,2026-01-14T10:00:00Z

@@ -1,0 +1,67 @@
+{
+  "jobs": [
+    {
+      "job_id": "90000000-0000-4000-8000-000000000001",
+      "job_type": "process_document",
+      "resource_id": "71000000-0000-4000-8000-000000000002",
+      "correlation_id": "91000000-0000-4000-8000-000000000001",
+      "attempt": 0,
+      "requested_at": "2026-02-04T10:05:30Z",
+      "expected_outcome": "succeeded"
+    },
+    {
+      "job_id": "90000000-0000-4000-8000-000000000002",
+      "job_type": "process_document",
+      "resource_id": "71000000-0000-4000-8000-000000000003",
+      "correlation_id": "91000000-0000-4000-8000-000000000002",
+      "attempt": 0,
+      "requested_at": "2026-02-08T11:00:30Z",
+      "expected_outcome": "succeeded"
+    },
+    {
+      "job_id": "90000000-0000-4000-8000-000000000003",
+      "job_type": "recalculate_risk",
+      "resource_id": "60000000-0000-4000-8000-000000000001",
+      "correlation_id": "91000000-0000-4000-8000-000000000003",
+      "attempt": 0,
+      "requested_at": "2026-02-10T15:01:00Z",
+      "expected_outcome": "succeeded"
+    },
+    {
+      "job_id": "90000000-0000-4000-8000-000000000004",
+      "job_type": "generate_assessment_report",
+      "resource_id": "83000000-0000-4000-8000-000000000001",
+      "correlation_id": "91000000-0000-4000-8000-000000000004",
+      "attempt": 0,
+      "requested_at": "2026-02-11T16:01:00Z",
+      "expected_outcome": "succeeded"
+    },
+    {
+      "job_id": "90000000-0000-4000-8000-000000000005",
+      "job_type": "create_expiry_reminder",
+      "resource_id": "71000000-0000-4000-8000-000000000002",
+      "correlation_id": "91000000-0000-4000-8000-000000000005",
+      "attempt": 0,
+      "requested_at": "2026-02-15T06:00:00Z",
+      "expected_outcome": "succeeded_once"
+    },
+    {
+      "job_id": "90000000-0000-4000-8000-000000000006",
+      "job_type": "process_document",
+      "resource_id": "71000000-0000-4000-8000-000000000099",
+      "correlation_id": "91000000-0000-4000-8000-000000000006",
+      "attempt": 1,
+      "requested_at": "2026-02-15T06:05:00Z",
+      "expected_outcome": "permanent_failure",
+      "expected_error_code": "INVALID_FILE_SIGNATURE"
+    }
+  ],
+  "payload_must_not_contain": [
+    "document_body",
+    "questionnaire_response",
+    "internal_note",
+    "invitation_token",
+    "signed_url",
+    "service_credential"
+  ]
+}

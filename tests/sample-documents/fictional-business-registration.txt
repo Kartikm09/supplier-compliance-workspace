@@ -1,0 +1,13 @@
+DEMONSTRATION DATA - NOT A REAL DOCUMENT
+
+FICTIONAL BUSINESS REGISTRATION SUMMARY
+
+Organization: Nova Plastics Demonstration Ltd.
+Display name: Nova Plastics Ltd.
+Fictional record reference: DEMO-NOVA-REG-2026-001
+Jurisdiction: Portfolio Test Jurisdiction
+Issue date: 2026-01-15
+Status: Active for demonstration
+
+This source exists only to test document metadata, private storage, versioning,
+and text extraction in Supplier Compliance Workspace. It has no legal validity.

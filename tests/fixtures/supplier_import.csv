@@ -1,0 +1,6 @@
+external_supplier_key,display_name,country_code,primary_category,contact_email,expected_import_outcome
+SUP-DEMO-001,Nova Plastics Ltd.,NL,packaging,nova-import@example.invalid,duplicate_existing_supplier
+SUP-DEMO-002,Orbit Materials Studio,DE,raw_materials,orbit@example.invalid,create_candidate
+SUP-DEMO-003,Harbor Test Components,BE,components,harbor@example.invalid,create_candidate
+SUP-DEMO-004,,FR,services,missing-name@example.invalid,validation_error_missing_name
+SUP-DEMO-005,Northwind Fictional Supply,ZZ,packaging,northwind@example.invalid,validation_error_country_code

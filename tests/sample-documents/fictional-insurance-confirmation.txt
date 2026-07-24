@@ -1,0 +1,12 @@
+DEMONSTRATION DATA - NOT A REAL DOCUMENT
+
+FICTIONAL INSURANCE CONFIRMATION
+
+Organization: Nova Plastics Demonstration Ltd.
+Fictional policy reference: DEMO-INS-NOVA-2026
+Issue date: 2026-01-20
+Expiry date: 2027-01-20
+Status: Current for demonstration
+
+No insurer, policy, premium, claim, or coverage is represented. This source is
+used only to test document requirements and private evidence handling.

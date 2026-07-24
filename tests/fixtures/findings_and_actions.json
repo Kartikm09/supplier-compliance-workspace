@@ -1,0 +1,77 @@
+{
+  "finding": {
+    "id": "80000000-0000-4000-8000-000000000001",
+    "assessment_id": "60000000-0000-4000-8000-000000000001",
+    "buyer_organization_id": "20000000-0000-4000-8000-000000000001",
+    "supplier_relationship_id": "40000000-0000-4000-8000-000000000001",
+    "finding_number": 1,
+    "severity": "medium",
+    "category": "quality_management",
+    "title": "Documented review cadence needs evidence",
+    "description": "Provide a concise corrective-action record showing the fictional quarterly quality review owner and completion check.",
+    "status": "verified",
+    "internal_note": "Buyer-only fixture: verify that this value is absent from every supplier-facing response.",
+    "raised_by": "10000000-0000-4000-8000-000000000003",
+    "assigned_supplier_user_id": "10000000-0000-4000-8000-000000000005",
+    "due_at": "2026-02-20T17:00:00Z",
+    "raised_at": "2026-02-06T14:00:00Z",
+    "closed_at": null
+  },
+  "events": [
+    {
+      "id": "80100000-0000-4000-8000-000000000001",
+      "event_type": "finding_raised",
+      "organization_id": "20000000-0000-4000-8000-000000000001",
+      "actor_user_id": "10000000-0000-4000-8000-000000000003",
+      "supplier_visible": true,
+      "comment": "A corrective-action response is requested by the fictional due date.",
+      "created_at": "2026-02-06T14:00:00Z"
+    },
+    {
+      "id": "80100000-0000-4000-8000-000000000002",
+      "event_type": "corrective_action_submitted",
+      "organization_id": "20000000-0000-4000-8000-000000000002",
+      "actor_user_id": "10000000-0000-4000-8000-000000000005",
+      "supplier_visible": true,
+      "comment": "The demonstration corrective action is ready for verification.",
+      "created_at": "2026-02-09T09:30:00Z"
+    },
+    {
+      "id": "80100000-0000-4000-8000-000000000003",
+      "event_type": "corrective_action_verified",
+      "organization_id": "20000000-0000-4000-8000-000000000001",
+      "actor_user_id": "10000000-0000-4000-8000-000000000003",
+      "supplier_visible": true,
+      "comment": "The fictional owner and review evidence satisfy the requested correction.",
+      "created_at": "2026-02-10T15:00:00Z"
+    }
+  ],
+  "corrective_action": {
+    "id": "81000000-0000-4000-8000-000000000001",
+    "finding_id": "80000000-0000-4000-8000-000000000001",
+    "supplier_organization_id": "20000000-0000-4000-8000-000000000002",
+    "submitted_by": "10000000-0000-4000-8000-000000000005",
+    "root_cause": "The fictional review record did not identify one accountable owner.",
+    "correction": "Assigned the demonstration quality coordinator and recorded the next quarterly review date.",
+    "preventive_action": "Added an owner-required check to the synthetic quarterly review template.",
+    "target_completion_date": "2026-02-18",
+    "status": "accepted",
+    "submitted_at": "2026-02-09T09:30:00Z",
+    "verified_by": "10000000-0000-4000-8000-000000000003",
+    "verified_at": "2026-02-10T15:00:00Z",
+    "verification_note": "Fictional evidence accepted for the portfolio scenario."
+  },
+  "visibility_assertion": {
+    "supplier_can_read": [
+      "title",
+      "description",
+      "status",
+      "supplier_visible_events",
+      "corrective_action"
+    ],
+    "supplier_must_not_receive": [
+      "internal_note",
+      "buyer_only_event_metadata"
+    ]
+  }
+}

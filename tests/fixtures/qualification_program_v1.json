@@ -1,0 +1,184 @@
+{
+  "program": {
+    "id": "50000000-0000-4000-8000-000000000001",
+    "buyer_organization_id": "20000000-0000-4000-8000-000000000001",
+    "name": "Standard Supplier Qualification",
+    "description": "Fictional baseline qualification for portfolio testing.",
+    "category": "general_supplier",
+    "status": "active",
+    "current_version_id": "51000000-0000-4000-8000-000000000001"
+  },
+  "version": {
+    "id": "51000000-0000-4000-8000-000000000001",
+    "version_number": 1,
+    "status": "active",
+    "effective_from": "2026-02-01",
+    "change_summary": "Initial fictional demonstration version.",
+    "published_at": "2026-01-31T16:00:00Z"
+  },
+  "sections": [
+    {
+      "id": "52000000-0000-4000-8000-000000000001",
+      "title": "Company information",
+      "display_order": 1
+    },
+    {
+      "id": "52000000-0000-4000-8000-000000000002",
+      "title": "Quality and delivery",
+      "display_order": 2
+    },
+    {
+      "id": "52000000-0000-4000-8000-000000000003",
+      "title": "Security and continuity",
+      "display_order": 3
+    },
+    {
+      "id": "52000000-0000-4000-8000-000000000004",
+      "title": "Environmental practices",
+      "display_order": 4
+    }
+  ],
+  "questions": [
+    {
+      "id": "53000000-0000-4000-8000-000000000001",
+      "section_id": "52000000-0000-4000-8000-000000000001",
+      "stable_question_key": "company.registration.confirmed",
+      "prompt": "Is the fictional organization registration information current?",
+      "answer_type": "boolean",
+      "required": true,
+      "display_order": 1,
+      "risk_weight": 10,
+      "validation_rules": {}
+    },
+    {
+      "id": "53000000-0000-4000-8000-000000000002",
+      "section_id": "52000000-0000-4000-8000-000000000002",
+      "stable_question_key": "quality.management.status",
+      "prompt": "Select the quality-management status represented by the demonstration evidence.",
+      "answer_type": "single_option",
+      "required": true,
+      "display_order": 1,
+      "risk_weight": 25,
+      "validation_rules": {}
+    },
+    {
+      "id": "53000000-0000-4000-8000-000000000003",
+      "section_id": "52000000-0000-4000-8000-000000000002",
+      "stable_question_key": "delivery.standard.lead_days",
+      "prompt": "Enter the standard fictional delivery lead time in days.",
+      "answer_type": "number",
+      "required": true,
+      "display_order": 2,
+      "risk_weight": 15,
+      "validation_rules": {
+        "minimum": 1,
+        "maximum": 90
+      }
+    },
+    {
+      "id": "53000000-0000-4000-8000-000000000004",
+      "section_id": "52000000-0000-4000-8000-000000000003",
+      "stable_question_key": "security.incident.process",
+      "prompt": "Is a documented information-security incident process maintained?",
+      "answer_type": "boolean",
+      "required": true,
+      "display_order": 1,
+      "risk_weight": 25,
+      "validation_rules": {}
+    },
+    {
+      "id": "53000000-0000-4000-8000-000000000005",
+      "section_id": "52000000-0000-4000-8000-000000000003",
+      "stable_question_key": "continuity.summary",
+      "prompt": "Summarize the fictional business-continuity review process.",
+      "answer_type": "text",
+      "required": false,
+      "display_order": 2,
+      "risk_weight": 10,
+      "validation_rules": {
+        "maximum_length": 500
+      }
+    },
+    {
+      "id": "53000000-0000-4000-8000-000000000006",
+      "section_id": "52000000-0000-4000-8000-000000000004",
+      "stable_question_key": "environment.policy.status",
+      "prompt": "Is a current environmental policy available?",
+      "answer_type": "boolean",
+      "required": true,
+      "display_order": 1,
+      "risk_weight": 15,
+      "validation_rules": {}
+    }
+  ],
+  "options": [
+    {
+      "id": "54000000-0000-4000-8000-000000000001",
+      "question_id": "53000000-0000-4000-8000-000000000002",
+      "value": "documented_and_current",
+      "label": "Documented and current",
+      "display_order": 1,
+      "risk_score": 0
+    },
+    {
+      "id": "54000000-0000-4000-8000-000000000002",
+      "question_id": "53000000-0000-4000-8000-000000000002",
+      "value": "documented_needs_update",
+      "label": "Documented but needs update",
+      "display_order": 2,
+      "risk_score": 10
+    },
+    {
+      "id": "54000000-0000-4000-8000-000000000003",
+      "question_id": "53000000-0000-4000-8000-000000000002",
+      "value": "not_documented",
+      "label": "Not documented",
+      "display_order": 3,
+      "risk_score": 25
+    }
+  ],
+  "document_requirements": [
+    {
+      "id": "55000000-0000-4000-8000-000000000001",
+      "stable_requirement_key": "business_registration",
+      "name": "Fictional business registration",
+      "required": true,
+      "accepted_mime_types": [
+        "application/pdf"
+      ],
+      "maximum_size_bytes": 1048576,
+      "requires_issue_date": true,
+      "requires_expiry_date": false,
+      "minimum_validity_days": 0,
+      "display_order": 1
+    },
+    {
+      "id": "55000000-0000-4000-8000-000000000002",
+      "stable_requirement_key": "quality_certificate",
+      "name": "Fictional quality certificate",
+      "required": true,
+      "accepted_mime_types": [
+        "application/pdf"
+      ],
+      "maximum_size_bytes": 1048576,
+      "requires_issue_date": true,
+      "requires_expiry_date": true,
+      "minimum_validity_days": 30,
+      "display_order": 2
+    },
+    {
+      "id": "55000000-0000-4000-8000-000000000003",
+      "stable_requirement_key": "insurance_confirmation",
+      "name": "Fictional insurance confirmation",
+      "required": true,
+      "accepted_mime_types": [
+        "application/pdf"
+      ],
+      "maximum_size_bytes": 1048576,
+      "requires_issue_date": true,
+      "requires_expiry_date": true,
+      "minimum_validity_days": 30,
+      "display_order": 3
+    }
+  ]
+}

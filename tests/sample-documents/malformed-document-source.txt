@@ -1,0 +1,7 @@
+DEMONSTRATION DATA - SAFE INVALID INPUT DESCRIPTION
+
+This plain-text file is intentionally not a PDF. A test may rename or submit a
+copy with a claimed application/pdf MIME type to verify that the processor checks
+the file signature and rejects extension/MIME mismatches safely.
+
+It contains no executable payload, exploit, embedded object, or active content.
