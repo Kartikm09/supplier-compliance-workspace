@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",
+    "build:sites": "node ../../scripts/clean-sites-build.mjs dist && tsc -b && vite build --config vite.sites.config.ts && node ../../scripts/sanitize-sites-build.mjs dist",
     "dev": "vite",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -25,6 +26,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "1.47.0",
     "@eslint/js": "10.0.1",
     "@testing-library/jest-dom": "7.0.0",
     "@testing-library/react": "16.3.2",

@@ -1,6 +1,11 @@
 node_modules/
 dist/
 .qa/
+.wrangler/
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+vite.sites.config.js
+vite.sites.config.d.ts
+worker/*.js
+worker/*.d.ts

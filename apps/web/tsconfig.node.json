@@ -8,5 +8,10 @@
     "target": "ES2023",
     "types": ["node"]
   },
-  "include": ["vite.config.ts", "eslint.config.js"]
+  "include": [
+    "vite.config.ts",
+    "vite.sites.config.ts",
+    "worker/**/*.ts",
+    "eslint.config.js"
+  ]
 }
