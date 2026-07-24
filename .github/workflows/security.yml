@@ -1,0 +1,28 @@
+name: Security
+
+on:
+  pull_request:
+  schedule:
+    - cron: "23 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: npm ci --prefix packages/contracts
+      - run: npm ci --prefix apps/web
+      - run: npm audit --prefix apps/web --audit-level=high
+      - run: node scripts/check-secrets.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e services/api pip-audit
+      - run: pip-audit --local

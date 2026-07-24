@@ -1,0 +1,27 @@
+services:
+  api:
+    build:
+      context: ./services/api
+    environment:
+      APP_ENV: development
+      INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:-local-development-token-change-me}
+      SUPABASE_SECRET_KEY: ${SUPABASE_SECRET_KEY:-}
+      SUPABASE_URL: ${SUPABASE_URL:-http://host.docker.internal:54321}
+    ports:
+      - "8001:8000"
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://127.0.0.1:8001}
+        VITE_SUPABASE_PUBLISHABLE_KEY: ${VITE_SUPABASE_PUBLISHABLE_KEY:-local-development-publishable-key}
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-http://127.0.0.1:54321}
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "4174:80"
+    restart: unless-stopped

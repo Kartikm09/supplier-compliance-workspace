@@ -1,0 +1,23 @@
+name: Feature request
+description: Propose a scoped portfolio-safe enhancement
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+    validations:
+      required: true
+  - type: textarea
+    id: security
+    attributes:
+      label: Relationship, Storage, or confidentiality considerations
+    validations:
+      required: true
