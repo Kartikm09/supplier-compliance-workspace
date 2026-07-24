@@ -1,173 +1,117 @@
 # Portfolio Notes
 
-> Use only claims supported by the repository's current evidence. The project is
-> an independent reference implementation, not client work or prior production
-> deployment.
+Supplier Compliance Workspace is an independent proof-of-work project. It is
+not client work, is not used by real customers, and contains only synthetic
+organizations, users, documents, and workflows.
 
 ## One-minute walkthrough
 
-Supplier Compliance Workspace is designed to show how a buyer and its suppliers
-can collaborate on qualification without exposing unrelated tenants or
-buyer-internal review information. A buyer publishes a versioned questionnaire
-and evidence requirements. A supplier accepts an invitation, completes an
-assessment, uploads private evidence, responds to findings, and receives a
-decision. PostgreSQL remains the authorization boundary, Supabase handles Auth,
-Storage, Edge Functions, Realtime, queues, and Cron, and FastAPI handles heavier
-document and reporting jobs.
+The application lets a buyer publish a qualification program, invite a supplier,
+collect versioned responses and private evidence, review a submission, raise
+findings, verify corrective actions, and record an approval decision. A supplier
+sees only the shared relationship data intended for it. Buyer-internal notes,
+risk calculations, and decision rationale remain protected.
 
-The technically distinctive part is relationship-based access. A supplier record
-is not visible merely because a user belongs to some supplier organization. The
-user must be an active member of the supplier on the exact buyer-supplier
-relationship, the relationship must permit access, the user's role must permit
-the action, and protected buyer fields must be excluded from the supplier result
-shape.
+The distinctive engineering problem is relationship-based access. A shared
+assessment has two legitimate organizations with different permissions, while
+every unrelated buyer and supplier must be excluded. PostgreSQL evaluates active
+membership, organization type, relationship state, role, assignment, workflow
+state, and field visibility.
 
-## Why this project exists
+## What I designed and implemented
 
-The project demonstrates product and engineering reasoning for a common
-enterprise workflow that combines:
-
-- multi-party access control
-- versioned requirements and evidence
-- private document handling
-- asynchronous processing
-- auditable state machines
-- field-level confidentiality
-- reproducible test scenarios
-
-It does not claim real customers, prior production operation, or external
-commissioning.
-
-## What was designed in this documentation slice
-
-- buyer and supplier role model
-- relationship-based authorization model
-- target relational data model
-- program, submission, document, risk, and decision versioning
-- Edge Function and FastAPI responsibility split
-- durable queue, retry, dead-letter, and Cron model
-- private Storage and exact-resource signed URL model
-- state machines and transaction boundaries
-- threat model and security verification checklist
-- layered test strategy
-- deterministic synthetic fixtures
-- deployment and rollback procedure
-
-Application implementation and operational results require separate evidence.
+- React buyer and supplier portals with role-aware navigation
+- PostgreSQL relationship model, constraints, indexes, and state machines
+- RLS policies and supplier-safe views
+- versioned questionnaires, submissions, documents, risks, and decisions
+- private Storage reservations and exact-record signed URLs
+- eleven transactional Edge Functions
+- private Realtime authorization and minimal Broadcast events
+- durable queues, bounded retries, dead-letter handling, and Cron reminders
+- FastAPI processing for CSV, PDF metadata, risk, and report generation
+- pgTAP, Deno, Pytest, Vitest, Playwright, hosted, and Docker verification
+- public web and dedicated Supabase deployment
 
 ## Interview-ready answers
 
-### How does multi-tenant RLS work?
+### Why is this harder than ordinary tenant filtering?
 
-The intended policies start with `auth.uid()`, require active organization
-membership, and then follow the record's indexed relationship to either the buyer
-or supplier party. Role and assignment checks narrow mutation rights. Suspended
-relationships stop ordinary access while preserving history. Critical commands
-run transactionally so authorization, state validation, mutation, and audit
-append succeed or fail together.
+An assessment belongs to a buyer-supplier relationship, not one simple tenant.
+The buyer can review and decide; the supplier can answer and upload evidence.
+Other suppliers connected to the same buyer must not see it. Access therefore
+combines two organization identities, relationship status, role, assignment,
+workflow state, and field confidentiality.
 
-### Why is relationship access harder than `organization_id` filtering?
+### How are internal fields protected?
 
-A shared assessment has two legitimate parties but very different permissions.
-The buyer can review and decide; the supplier can answer and provide evidence.
-Other suppliers connected to the same buyer must not see one another. The model
-therefore combines two organization identities, relationship status, role,
-assignment, workflow state, and field visibility rather than checking one tenant
-column.
+RLS filters rows but cannot selectively hide columns. Base-table grants are
+restricted and supplier-facing reads use views that remove internal notes,
+scoring breakdowns, and decision rationale. Hosted tests query through real
+supplier JWTs and verify the protected values are absent.
 
-### How are buyer-internal fields protected?
+### How are private files protected?
 
-RLS alone cannot hide selected columns. Supplier-facing reads should use
-restricted grants and supplier-safe views or controlled functions that omit
-internal notes, scoring breakdowns, and decision rationale. Tests must query
-through the same API role and JWT claims used by the browser and assert that the
-protected keys are absent, not merely null in the UI.
-
-### How are private documents protected?
-
-Documents use private Storage paths generated from authorized database records.
-The client cannot ask the server to sign an arbitrary path. A function resolves
-an exact document-version ID, verifies relationship access, then returns a
-short-lived signed URL. Replacement inserts a new immutable version rather than
-overwriting previously reviewed evidence.
+Clients never submit an arbitrary path for signing. An Edge Function resolves a
+document-version ID, verifies relationship access, and signs the server-recorded
+private path for a short period. Upload reservations validate MIME type, size,
+extension, checksum, and dates. Replacement creates a new immutable version.
 
 ### How does versioning work?
 
-Publishing freezes a program version. An assessment keeps the exact version it
-started with, and submission creates an immutable snapshot. Document replacement,
-risk recalculation, and later decisions create new versioned records. This keeps
-the evidence used for a historical decision reproducible.
+Publishing freezes a program version. An assessment retains the exact version it
+started with, and submission creates a snapshot. Document replacement, risk
+recalculation, and approval decisions append new records rather than rewriting
+historical evidence.
 
 ### Why use both Edge Functions and FastAPI?
 
-Edge Functions sit close to Supabase Auth and PostgreSQL for short,
-identity-sensitive commands such as invitations, submission, findings, and
-signed URLs. FastAPI handles longer server-side jobs such as CSV imports, PDF
-metadata extraction, deterministic risk calculation, and report generation.
-Queues connect the two so a browser request does not own a long-running job.
+Edge Functions are suited to short, identity-sensitive commands near Supabase
+Auth and PostgreSQL. FastAPI handles heavier reusable jobs such as CSV imports,
+PDF extraction, deterministic risk calculation, and report generation. Durable
+queues keep browser requests independent from worker duration.
 
-### How are retries made safe?
+### How were AI-assisted changes validated?
 
-Queue messages carry opaque record IDs and correlation IDs. Consumers use a
-visibility timeout, commit results before acknowledging, and enforce an
-idempotency key based on the resource and operation version. Transient failures
-retry with bounded backoff; permanent or exhausted failures become reviewable
-dead-letter records.
-
-### How would AI-assisted coding output be reviewed?
-
-AI-generated changes would be treated as untrusted code. I would inspect the
-diff, trace authorization and data-flow changes, run format and type checks, run
-positive and negative tests, inspect migrations and grants, and verify the
-hosted denial cases. A generated test suite or confident explanation is not
-accepted as proof without executing it.
+Generated code was treated as untrusted. I reviewed diffs, followed
+authorization and data flows, ran type and format checks, reset the database,
+executed positive and negative tests, inspected migrations and grants, tested
+real hosted JWT sessions, scanned source and bundles for secrets, and verified
+containers and the public application.
 
 ### What would change at production scale?
 
-I would add formal retention and recovery objectives, stronger document
-isolation and malware scanning, centralized secrets and audit export, load-tested
-queue settings, operational alerting, managed email delivery, backup-restore
-drills, privacy workflows, and a formal authorization review for each schema
-change.
+I would add malware scanning, managed email, formal retention and privacy
+workflows, SIEM export, load-tested queue sizing, backup-restore drills, incident
+response, SLOs, stronger document isolation, and an external authorization
+review.
 
-## Honest technical compromises
+## Safe resume claims
 
-- OCR and active-content document processing are excluded.
-- External email is optional; in-app notification records remain testable.
-- Realtime carries minimal invalidation events, not authoritative state.
-- Risk scoring is deterministic and transparent rather than dependent on a paid
-  AI service.
-- Local container isolation is not described as a hardened sandbox.
-- Availability, throughput, and recovery targets remain undefined until measured.
+- Built and deployed a synthetic multi-tenant supplier qualification reference
+  application using React, FastAPI, PostgreSQL, and Supabase.
+- Implemented relationship-based RLS, private versioned evidence, transactional
+  workflows, durable jobs, private Realtime, and append-only audit history.
+- Created 227 database tests plus Deno, Pytest, Vitest, Playwright, hosted, and
+  Docker verification for cross-tenant access and workflow behavior.
 
-## Safe claims today
+## Safe application answer
 
-- Designed a relationship-based authorization and data model for a fictional
-  buyer-supplier qualification workspace.
-- Documented versioned questionnaires, immutable submission snapshots, private
-  evidence handling, findings, corrective actions, and decision workflows.
-- Created a layered security and testing strategy with deterministic synthetic
-  fixtures and explicit cross-tenant denial cases.
+I built Supplier Compliance Workspace as an independent public proof-of-work
+project. It models a buyer inviting and qualifying suppliers through versioned
+questionnaires, private evidence, findings, corrective actions, and decisions.
+The key technical challenge was enforcing relationship-based access and hiding
+buyer-internal fields from supplier users. I deployed the React app and a
+dedicated Supabase backend, verified hosted Auth, RLS, Storage, Edge Functions,
+and private Realtime, and documented that the FastAPI worker remains
+container-verified but not publicly hosted.
 
-## Claims allowed only after verification
+## Honest limitations
 
-Do not use these until reports contain actual evidence:
-
-- "Implemented and deployed"
-- "RLS-protected"
-- "All tests pass"
-- "Production-ready"
-- "Used by customers"
-- "CI passing"
-- "Secure document processing"
-- "Live public application"
-
-## Recruiter-facing project description
-
-> Independently designed a multi-tenant supplier qualification reference
-> platform using a React, FastAPI, PostgreSQL, and Supabase architecture. The
-> design covers relationship-based authorization, versioned programs and
-> evidence, private document workflows, findings, corrective actions, approval
-> decisions, durable jobs, and explicit cross-tenant test scenarios. All data is
-> synthetic, and implementation/deployment claims are made only after verified
-> evidence is recorded.
+- No real customer or external commissioning is claimed.
+- FastAPI is not publicly deployed because no authenticated container provider
+  was available.
+- OCR, malware scanning, email delivery, load testing, and recovery exercises
+  are not included.
+- The public repository does not contain reusable demo passwords.
+- The system is a portfolio reference implementation, not a compliance
+  certification product.

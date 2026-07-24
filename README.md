@@ -1,106 +1,75 @@
 # Supplier Compliance Workspace
 
-> **Current status:** Documentation and synthetic test fixtures are in place.
-> Application implementation, automated product tests, hosted deployment, and
-> screenshots remain **pending verification**.
+[Live application](https://supplier-compliance-workspace.zw386.chatgpt.site) |
+[Architecture](ARCHITECTURE.md) |
+[Test evidence](TEST_REPORT.md) |
+[Deployment status](DEPLOYMENT_REPORT.md)
 
-An independently designed reference implementation for secure buyer-and-supplier
-qualification workflows. The target system combines relationship-based
-authorization, versioned questionnaires, private evidence, findings, corrective
-actions, approvals, reminders, and audit history in one multi-tenant workspace.
+An independently designed multi-tenant reference implementation for buyer and
+supplier qualification. It combines versioned questionnaires, private evidence,
+findings, corrective actions, approval decisions, reminders, and audit history
+with relationship-aware authorization.
 
-This is a portfolio project for Kartik Mishra. It is not client work, does not
-represent prior production use, and contains only fictional demonstration data.
+> **Verified status:** The React application and dedicated Supabase backend are
+> publicly deployed. Hosted Auth, PostgreSQL RLS, private Storage, 11 Edge
+> Functions, queues, Cron, and private Realtime were tested with fictional
+> accounts. The FastAPI worker is fully tested and container-verified, but is not
+> publicly hosted because no authenticated container provider was available.
+
+This is a portfolio reference project for Kartik Mishra. It is not client work,
+does not represent prior production use, and contains only synthetic data.
 
 ## 30-second overview
 
 | Question | Answer |
 | --- | --- |
-| What problem does it address? | Supplier qualification is often fragmented across email, spreadsheets, file shares, and disconnected review notes. |
-| Who uses it? | Buyer owners, buyer reviewers, supplier administrators, supplier contributors, and read-only stakeholders. |
-| What makes it technically meaningful? | Access depends on organization membership **and** an active buyer-supplier relationship; buyer-internal fields must never leak to suppliers. |
-| What is the core workflow? | Publish program, invite supplier, collect responses and evidence, review, raise findings, verify corrective action, record a decision, and monitor expiry. |
-| What is implemented now? | Architecture, security, data-model, testing, deployment, and portfolio documentation plus deterministic synthetic fixtures. |
-| What is not yet verified? | Product code, migrations, RLS policies, Edge Functions, FastAPI, UI, E2E tests, public deployment, and CI results. |
+| Problem | Supplier qualification is often fragmented across email, spreadsheets, file shares, and disconnected review notes. |
+| Users | Buyer owners, reviewers, supplier administrators, contributors, and read-only stakeholders. |
+| Core workflow | Publish program, invite supplier, collect responses and evidence, review, raise findings, verify corrective action, and record a decision. |
+| Technical focus | Relationship-based RLS, field confidentiality, immutable versions, private files, transactional state changes, durable jobs, and reproducible tests. |
+| Live state | Public web app plus a dedicated healthy Supabase project in `eu-central-1`. |
+| Honest limitation | Hosted background processing awaits a public FastAPI container host; the complete workflow is verified locally and in Docker. |
 
-## Product problem
-
-Supplier onboarding combines collaborative work with strict confidentiality:
-
-- Buyers define qualification programs and evaluate supplier evidence.
-- Suppliers answer questionnaires and maintain versioned documents.
-- Reviewers record findings and internal risk assessments.
-- Both sides collaborate on corrective actions.
-- Buyer-only notes, scores, and rationale must remain private.
-- Every meaningful transition needs an attributable audit trail.
-
-Simple `organization_id` filtering is insufficient because access to shared
-records depends on a specific relationship between one buyer and one supplier.
-The target authorization model therefore evaluates membership, role,
-organization type, relationship state, assignment, and field visibility.
-
-## Demonstration workflow
-
-The reproducible scenario uses only fictional entities:
-
-1. **Apex Components Group** publishes version 1 of the **Standard Supplier
-   Qualification** program.
-2. Apex invites **Nova Plastics Ltd.**
-3. Nova accepts and assigns a supplier contributor.
-4. An incomplete assessment is blocked from submission.
-5. Nova completes the missing response and uploads fictional evidence.
-6. Apex requests a replacement for one document version.
-7. Nova uploads a new immutable version.
-8. Apex raises a medium-severity finding.
-9. Nova submits a corrective action.
-10. Apex verifies the action and conditionally approves Nova.
-11. A scheduled job creates a document-expiry reminder.
-12. **Greenline Packaging Works** is denied access to Nova's relationship,
-    documents, internal notes, and risk calculation.
-
-Synthetic fixtures supporting this sequence live in
-[`tests/fixtures`](tests/fixtures/README.md).
-
-## Target capabilities
+## Working product
 
 ### Buyer workspace
 
-- Build and publish versioned qualification programs.
-- Invite suppliers and assign reviewers.
-- Review responses and private evidence.
-- Keep internal notes and risk scores buyer-only.
-- Raise findings, verify corrective actions, and record decisions.
+- Dashboard for relationships, review queues, findings, expiry risk, and activity.
+- Versioned qualification-program builder with immutable published versions.
+- Response and evidence review with buyer-only notes.
+- Finding creation, corrective-action verification, and approval decisions.
+- Filterable audit history and private notification updates.
 
 ### Supplier workspace
 
-- Accept a buyer invitation and maintain a supplier profile.
-- Complete assigned questionnaires with conditional validation.
-- Upload evidence without public object URLs.
-- Replace documents without overwriting history.
-- Respond to findings and track approval status.
+- Relationship and assessment dashboards.
+- Typed questionnaire responses with completeness validation.
+- Private evidence upload with immutable document versions.
+- Supplier-visible findings and corrective-action submission.
+- Explicit denial of buyer-internal notes and risk calculations.
 
 ### Platform controls
 
-- PostgreSQL-enforced relationship authorization and state transitions.
-- Private Supabase Storage with short-lived, authorized signed URLs.
-- Edge Functions for identity-sensitive transactional commands.
-- FastAPI workers for document processing, imports, risk calculation, and PDF
-  report generation.
-- Durable queues with bounded retries and dead-letter handling.
-- Private Realtime channels containing only supplier-safe event summaries.
+- Eight buyer and supplier roles enforced in PostgreSQL.
+- Private Storage with exact-record, short-lived signed URLs.
+- One-time invitation tokens stored only as secure hashes.
+- Eleven Edge Functions for transactional identity-sensitive commands.
+- Durable document, risk, report, and notification queues.
+- Low-frequency Cron reminders and retry consumers.
+- Private Realtime Broadcast channels with minimal invalidation payloads.
 - Append-only audit history for ordinary users.
 
-## Target architecture
+## Architecture
 
 ```mermaid
 flowchart LR
-    Buyer[Buyer portal user]
-    Supplier[Supplier portal user]
-    Web[React + TypeScript web app]
+    Buyer[Buyer portal]
+    Supplier[Supplier portal]
+    Web[React and TypeScript]
     Edge[Supabase Edge Functions]
-    API[FastAPI processing service]
+    API[FastAPI worker]
     Auth[Supabase Auth]
-    DB[(PostgreSQL + RLS)]
+    DB[(PostgreSQL and RLS)]
     Storage[(Private Storage)]
     Queue[(Durable queues)]
     Cron[Supabase Cron]
@@ -122,139 +91,178 @@ flowchart LR
     DB --> RT
 ```
 
-The browser performs ordinary authorized reads and drafts through Supabase. Edge
-Functions own sensitive, transactional commands. FastAPI handles heavier,
-server-only processing. See [ARCHITECTURE.md](ARCHITECTURE.md).
+The browser performs ordinary authorized reads and drafts through Supabase.
+Edge Functions own sensitive transactional commands. FastAPI handles heavier,
+server-only processing. Queue messages contain record IDs and correlation IDs,
+not document contents or credentials. See [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Demonstration workflow
+
+The reproducible scenario uses fictional organizations only:
+
+1. **Apex Components Group** publishes version 1 of **Standard Supplier
+   Qualification**.
+2. Apex invites **Nova Plastics Ltd.**
+3. Nova accepts and receives a relationship-scoped workspace.
+4. An incomplete assessment is blocked.
+5. Nova completes responses and uploads fictional evidence.
+6. Apex requests a replacement without overwriting the original version.
+7. Apex raises a finding and Nova submits a corrective action.
+8. Apex verifies the action and conditionally approves Nova.
+9. A report and expiry notification are generated.
+10. **Greenline Packaging Works** is denied Nova's records, files, private
+    channels, internal notes, and risk calculation.
 
 ## Security model
 
-The target system follows four rules:
+1. **Relationship before record:** access requires active membership on the
+   exact buyer or supplier side of a relationship.
+2. **PostgreSQL is the boundary:** frontend controls improve usability, while
+   RLS and transactional functions enforce permissions.
+3. **RLS does not solve column secrecy:** supplier-safe views omit buyer-only
+   notes, risk details, and rationale.
+4. **Files remain private:** the caller requests a URL for a document-version
+   ID; user-supplied paths are never signed.
+5. **Sensitive actions are auditable:** workflow transitions append redacted
+   audit events in the same controlled operation.
 
-1. **Relationship before record:** shared data is visible only through an active
-   buyer-supplier relationship and active organization membership.
-2. **Roles are enforced in PostgreSQL:** hidden buttons are usability controls,
-   not the authorization boundary.
-3. **Rows do not solve column secrecy:** supplier-safe views or narrowly scoped
-   functions must exclude buyer-internal notes, scoring, and rationale.
-4. **Files remain private:** clients request a signed URL for an exact authorized
-   document version; arbitrary paths are never signed.
+The hosted verifier proved anonymous denial, cross-supplier isolation,
+internal-field confidentiality, private bucket configuration, Edge
+authorization, private-channel denial, and live authorized Broadcast delivery.
+See [SECURITY.md](SECURITY.md).
 
-Detailed controls and the pending verification checklist are in
-[SECURITY.md](SECURITY.md).
+## Versioning
 
-## Versioning strategy
+- Published program versions cannot be edited.
+- Assessments remain linked to their starting version.
+- Submission snapshots preserve the reviewed responses.
+- Evidence replacement creates a new document version.
+- Risk evaluations and approval decisions append history.
+- Audit events are immutable to ordinary authenticated roles.
 
-- Published program versions become immutable.
-- Assessments remain linked to the version under which they started.
-- Submitted responses are captured as an immutable submission snapshot.
-- Document replacement creates a new document version.
-- Risk calculations and approval decisions are appended, not rewritten.
-- Amendments create new records with explicit lineage.
+## Genuine screenshots
 
-See [DATA_MODEL.md](DATA_MODEL.md) and
-[versioning-and-immutability.md](docs/architecture/versioning-and-immutability.md).
+| Buyer dashboard | Supplier dashboard |
+| --- | --- |
+| ![Buyer dashboard](docs/screenshots/buyer-dashboard.png) | ![Supplier dashboard](docs/screenshots/supplier-dashboard.png) |
 
-## Intended technology stack
+| Program builder | Cross-tenant denial |
+| --- | --- |
+| ![Qualification program builder](docs/screenshots/qualification-program-builder.png) | ![Cross-tenant access denied](docs/screenshots/cross-tenant-access-denied.png) |
+
+All nine screenshots were recaptured from the public deployment by the hosted
+Playwright suite. No password, token, signed URL, or private key is visible.
+
+## Technology
 
 | Layer | Technology |
 | --- | --- |
-| Web | React, TypeScript, Vite, React Router, TanStack Query, Zod |
-| Platform | Supabase Auth, PostgreSQL, RLS, Storage, Edge Functions, Realtime, Queues, Cron |
-| Processing | Python, FastAPI, Pydantic, structured logging |
+| Web | React 19, TypeScript 6, Vite 8, React Router, TanStack Query, Zod |
+| Platform | Supabase Auth, PostgreSQL 17, RLS, Storage, Edge Functions, Realtime, Queues, Cron |
+| Processing | Python 3.11+, FastAPI, Pydantic, pypdf, ReportLab |
 | Tests | pgTAP, Deno test, Pytest, Vitest, React Testing Library, Playwright |
-| Delivery | Docker, GitHub Actions, SQL migrations, generated TypeScript database types |
+| Delivery | Docker Compose, Nginx, GitHub Actions, SQL migrations, Sites |
 
-Versions must be pinned by implementation files before this table is treated as
-verified build evidence.
+Verified workstation toolchains are recorded in
+[TEST_REPORT.md](TEST_REPORT.md).
 
 ## Repository map
 
 ```text
-apps/web/                 React buyer and supplier portals (target)
-services/api/             FastAPI processing service (target)
-supabase/                 Migrations, functions, tests, and seed data (target)
-packages/                 Shared contracts and generated types (target)
-tests/e2e/                Critical browser workflows (target)
-tests/fixtures/           Synthetic machine-readable fixtures
-tests/sample-documents/   Safe source material for generated test PDFs
-docs/                     Architecture, security, operations, and decisions
+apps/web/                 React buyer and supplier portals
+services/api/             FastAPI processing service
+supabase/migrations/      Reproducible PostgreSQL platform
+supabase/functions/       Authenticated Edge Functions and shared controls
+supabase/tests/           pgTAP schema, RLS, Storage, workflow, and Realtime tests
+packages/contracts/       Shared contracts and generated database types
+tests/e2e/                Desktop and mobile browser workflows
+tests/fixtures/           Deterministic synthetic datasets
+tests/sample-documents/   Safe fictional PDF source material
+docs/                     Architecture, security, decisions, and screenshots
 ```
 
-## Local setup
+## Quick start
 
-The commands below are the **intended interface**. They must not be interpreted
-as verified until the corresponding source files and toolchain are present and
-the results are recorded in [TEST_REPORT.md](TEST_REPORT.md).
+Prerequisites: Docker, Node.js 24, Python 3.11+, and the Supabase CLI.
 
 ```bash
 cp .env.example .env
-supabase start
-supabase db reset
-npm ci
-python -m venv services/api/.venv
-services/api/.venv/bin/pip install -r services/api/requirements-dev.txt
-npm run dev
+make setup
+make db-start
+make db-reset
+make test
+make build
+docker compose up --build
 ```
 
-Never commit `.env`. Demo-user passwords and server credentials must be supplied
-at runtime.
+Environment-controlled demo passwords are required for authenticated browser
+tests. No universal demo password is committed.
 
-## Intended quality gates
+### Quality commands
 
 ```bash
-npm run format:check
-npm run lint
-npm run typecheck
-npm test
-npm run test:e2e
-services/api/.venv/bin/python -m pytest services/api
-supabase test db
-deno test --allow-env supabase/functions
-docker compose build
+make lint
+make typecheck
+make test
+make build
+make e2e
+make verify
+node scripts/check-secrets.mjs
+python3 docs/validation/validate_portfolio_slice.py
 ```
 
-Actual commands, counts, failures, and skips belong in
-[TEST_REPORT.md](TEST_REPORT.md). Configuration alone is not a passing test.
+The complete application flow can be exercised with
+`node scripts/verify-platform.mjs` after supplying the variables documented in
+`.env.example`.
 
-## Documentation
+## Verified results
 
-| Document | Purpose |
-| --- | --- |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Components, authorization, sequences, state machines, and queue design |
-| [DATA_MODEL.md](DATA_MODEL.md) | Entities, ownership paths, constraints, indexes, and sensitive-field rules |
-| [SECURITY.md](SECURITY.md) | Threat model, RLS, Storage, token, parsing, and secret controls |
-| [TESTING.md](TESTING.md) | Test strategy, fixture use, required denial cases, and execution procedure |
-| [DEPLOYMENT.md](DEPLOYMENT.md) | Local and hosted rollout procedure with rollback and verification gates |
-| [PORTFOLIO_NOTES.md](PORTFOLIO_NOTES.md) | Truthful recruiter walkthrough and interview-ready explanations |
-| [docs/decisions](docs/decisions/README.md) | Architecture decision records |
+| Area | Result |
+| --- | ---: |
+| Local pgTAP | 227 passed |
+| Hosted pgTAP | 227 passed |
+| Edge Functions | 21 passed |
+| FastAPI | 84 passed |
+| Frontend | 26 passed |
+| Local Playwright | 9 passed, 1 intentional skip |
+| Hosted Playwright | 9 passed, 1 intentional skip |
+| Documentation validator | 0 errors |
+| npm audit | 0 vulnerabilities |
+| pip-audit | 0 known vulnerabilities in auditable dependencies |
+| Secret scan | Standard build (293 files) and Sites build (296 files) passed |
+| Docker | API and web images built and reported healthy |
 
-## Screenshots
+See [TEST_REPORT.md](TEST_REPORT.md) for commands, scope, and limitations.
 
-No screenshots are included yet. Only genuine application output captured after
-implementation and verification may be added. The required capture checklist is
-in [`docs/screenshots/README.md`](docs/screenshots/README.md).
+## Deployment
+
+- Web: [supplier-compliance-workspace.zw386.chatgpt.site](https://supplier-compliance-workspace.zw386.chatgpt.site)
+- Supabase: dedicated hosted project with seven applied migrations and eleven
+  deployed Edge Functions
+- FastAPI: tested locally and in a nonroot Docker image; public deployment is
+  pending provider authentication
+
+Public reviewer credentials are intentionally not stored in this repository.
+The screenshots and source provide an inspectable walkthrough; hosted account
+access can be granted through the controlled invitation flow.
 
 ## Portfolio summary
 
-> Supplier Compliance Workspace is an independent reference design for a
-> multi-tenant buyer-and-supplier qualification platform. It models versioned
-> programs, private document evidence, relationship-based authorization,
-> findings, corrective actions, approval decisions, reminders, and auditable
-> state transitions using React, FastAPI, PostgreSQL, and Supabase.
+> Built and deployed an independent multi-tenant supplier qualification
+> reference application using React, FastAPI, PostgreSQL, and Supabase.
+> Implemented relationship-based RLS, private versioned evidence, transactional
+> invitation and review workflows, durable processing, private Realtime, and
+> automated cross-tenant tests using synthetic data.
 
-At the current repository stage, the safe claim is that the architecture,
-security model, test strategy, and synthetic fixtures have been designed. Claims
-about working software, test results, deployment, or production readiness require
-later evidence.
+## Limitations and ethical use
 
-## Ethical use and limitations
-
-- All organizations, people, identifiers, answers, documents, and events are
-  synthetic.
-- This project is not a certification, legal opinion, audit service, or complete
-  vendor-risk platform.
-- The target PDF flow supports small text-based demonstration documents only.
-  OCR and active-content execution are intentionally excluded.
-- Realtime events are delivery hints; PostgreSQL remains authoritative.
-- A local container is not a hardened sandbox for malicious document processing.
-- No external customer, employer, or platform has endorsed this project.
+- All organizations, people, identifiers, documents, and events are synthetic.
+- The project is not a legal opinion, certification, audit service, or complete
+  vendor-risk product.
+- OCR, malware scanning, external email delivery, and active document content
+  are intentionally excluded.
+- Hosted background jobs cannot complete until FastAPI receives a public
+  container deployment.
+- Realtime is an invalidation mechanism; PostgreSQL remains authoritative.
+- No customer, employer, client, or platform commissioned or endorsed this
+  project.

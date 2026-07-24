@@ -1,4 +1,10 @@
 {
+  "ignores": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/report/**",
+    "**/artifacts/**"
+  ],
   "config": {
     "default": true,
     "MD013": false

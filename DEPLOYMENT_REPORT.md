@@ -2,88 +2,110 @@
 
 **Report date:** 2026-07-24  
 **Application:** Supplier Compliance Workspace  
-**Report status:** Pending implementation and independent hosted verification
+**Status:** Public web and Supabase deployed; public FastAPI pending
 
-## Current factual status
+## Verified resources
 
-| Area | Status | Evidence |
+| Resource | Status | Location |
 | --- | --- | --- |
-| Dedicated Supabase project | Pending verification | No project linkage or hosted inspection evidence is recorded in this repository slice |
-| Database migrations | Not verified | Application migrations are outside this documentation scope |
-| Database tests | Not run | No pgTAP result is recorded |
-| Private Storage | Not verified | Bucket and policy state not inspected |
-| Edge Functions | Not verified | Deployment and endpoint checks not performed |
-| Queues and Cron | Not verified | Hosted queue and schedule state not inspected |
-| Realtime authorization | Not verified | No hosted channel test recorded |
-| FastAPI | Not deployed or verified in this slice | No public URL asserted |
-| Frontend | Not deployed or verified in this slice | No public URL asserted |
-| GitHub repository | Not verified in this slice | No public URL asserted |
-| Security review | Design documented; execution pending | See [SECURITY.md](SECURITY.md) |
-| Product test suite | Not run | See [TEST_REPORT.md](TEST_REPORT.md) |
-| Documentation and fixtures | Locally validated | Standard-library integrity validator and Markdown lint; see [TEST_REPORT.md](TEST_REPORT.md) |
+| Public web application | Deployed and browser-tested | [supplier-compliance-workspace.zw386.chatgpt.site](https://supplier-compliance-workspace.zw386.chatgpt.site) |
+| Supabase project | `ACTIVE_HEALTHY` | `supplier-compliance-workspace`, `eu-central-1` |
+| Supabase project reference | Configured | `rtcsafigttuebpetaprz` |
+| PostgreSQL migrations | Applied | 7 versioned migrations |
+| Hosted pgTAP | Passed | 227 tests |
+| Edge Functions | Deployed | 11 functions |
+| Auth | Verified | Four environment-controlled fictional users |
+| Private Storage | Verified | Evidence and report buckets are private |
+| Private Realtime | Verified | Authorized Broadcast delivered; cross-tenant join denied |
+| Queues and Cron | Schema deployed | Hosted worker completion blocked by missing public FastAPI |
+| FastAPI image | Built and healthy | Local Docker only |
+| GitHub repository | Publication pending in this report revision | Updated after remote verification |
+| Secret review | Passed | Standard and Sites source/build scans |
 
-## Deployment URLs
+## Frontend deployment
 
-| Resource | URL |
-| --- | --- |
-| Frontend | Pending verified deployment |
-| FastAPI | Pending verified deployment |
-| Supabase API | Intentionally omitted until deployment owner verifies configuration |
-| GitHub | Pending verified publication |
+- URL: [https://supplier-compliance-workspace.zw386.chatgpt.site](https://supplier-compliance-workspace.zw386.chatgpt.site)
+- Access: public
+- Saved Sites version: 1
+- Deployed source: `48b87b2866cbf58c560533c4ce9a0d4f269c0fc8`
+- Supabase Auth Site URL and callback allowlist: configured
+- Edge Function allowed origin: configured for the public URL and local ports
+- Hosted Playwright: 9 passed, 1 intentional desktop skip
 
-Do not replace these entries with guessed URLs. A URL is added only after it
-resolves and its expected protected and public behavior has been checked.
+## Supabase deployment
 
-## Edge Functions
+Hosted migrations provide:
 
-Target names:
+- organization and relationship authorization
+- versioned programs, assessments, responses, and evidence
+- findings, corrective actions, risk evaluations, and decisions
+- private buckets and Storage policies
+- transactional state machines and audit history
+- durable queues, retry metadata, dead-letter handling, and Cron schedules
+- private Broadcast authorization and minimal change triggers
+- supplier-safe views for protected fields
 
-- `create-supplier-invitation`
-- `accept-supplier-invitation`
-- `create-document-upload`
-- `finalize-document-upload`
-- `submit-assessment`
-- `create-finding`
-- `submit-corrective-action`
-- `record-approval-decision`
-- `get-signed-document-url`
+The hosted seed contains only Apex Components Group, Nova Plastics Ltd.,
+Greenline Packaging Works, and other clearly fictional records. Passwords and
+server credentials are environment-controlled and are not committed.
 
-Deployment status for every function is pending.
+## Deployed Edge Functions
 
-## Migration and seed status
+1. `create-supplier-invitation`
+2. `accept-supplier-invitation`
+3. `create-document-upload`
+4. `finalize-document-upload`
+5. `submit-assessment`
+6. `create-finding`
+7. `submit-corrective-action`
+8. `record-approval-decision`
+9. `get-signed-document-url`
+10. `generate-assessment-report`
+11. `process-queues`
 
-- Hosted migration history: pending inspection
-- Local clean reset: pending
-- Fictional seed: pending execution
-- Generated TypeScript types: pending
-- Demo users: pending environment-controlled creation
+## FastAPI status
 
-## Verification still required
+No authenticated Render, Railway, Fly.io, or equivalent container provider was
+available. The service is therefore not represented as publicly deployed.
 
-1. Record toolchain versions and commit hash.
-2. Verify the dedicated Supabase project and local link.
-3. Run clean local migrations and all pgTAP tests.
-4. Deploy and test Edge Functions.
-5. Verify private Storage and exact-resource signed URLs.
-6. Verify queue retries, dead-letter behavior, and Cron reminders.
-7. Build and test FastAPI container.
-8. Build and scan the frontend bundle.
-9. Run local and hosted E2E workflows.
-10. Test cross-buyer, cross-supplier, private-field, and direct-URL denials.
-11. Record only observed URLs and results.
-12. Reconcile README status before public publication.
+Verified locally:
 
-## Known deployment blockers
+- 84 Pytest tests
+- strict Ruff and mypy checks
+- nonroot Python 3.11.13 image
+- fixed `pip 26.1.2`
+- healthy `/health`, `/ready`, and `/version`
+- document, risk, CSV import, and PDF report processing
 
-No external-provider blocker was tested in this documentation-only slice.
-Deployment ownership must record whether authenticated frontend and FastAPI hosts
-are available. Lack of an authenticated host is an acceptable documented
-blocker; it is not permission to claim a public deployment.
+The hosted `INTERNAL_API_URL` is set to an explicit non-routable placeholder so
+background jobs fail visibly and retain retry state rather than silently
+pretending to complete.
 
-## Release decision
+## Security and test status
 
-**Not ready for a verified public release based on this report alone.**
+- Local pgTAP: 227 passed
+- Hosted pgTAP: 227 passed
+- Deno: 21 passed
+- Pytest: 84 passed
+- Vitest: 26 passed
+- Local Playwright: 9 passed, 1 intentional skip
+- Hosted Playwright: 9 passed, 1 intentional skip
+- npm audit: 0 vulnerabilities
+- pip-audit: 0 known third-party vulnerabilities
+- Secret scan: 0 findings across 293 standard-build files and 296 Sites-build
+  files
+- Docker: API and web images built and reached healthy state
 
-The documentation is designed to support implementation and review, but it does
-not substitute for application code, passing tests, secret scans, or hosted
-smoke checks.
+See [TEST_REPORT.md](TEST_REPORT.md) and [SECURITY.md](SECURITY.md).
+
+## Remaining manual deployment step
+
+1. Authenticate a container provider.
+2. Deploy `services/api/Dockerfile`.
+3. Store `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, and `INTERNAL_API_TOKEN` in the
+   provider secret manager.
+4. Replace the hosted `INTERNAL_API_URL` placeholder.
+5. Rebuild the web app only if the public API base becomes browser-facing.
+6. Run the complete hosted queue, report, and reminder workflow.
+
+No billing change or paid service was accepted.

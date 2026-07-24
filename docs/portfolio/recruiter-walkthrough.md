@@ -3,7 +3,7 @@
 ## Five-minute path
 
 1. Read the [30-second overview](../../README.md#30-second-overview).
-2. Review the [target architecture](../../README.md#target-architecture).
+2. Review the [architecture](../../README.md#architecture).
 3. Inspect the
    [relationship authorization model](../architecture/relationship-authorization.md).
 4. Review [versioning and immutability](../architecture/versioning-and-immutability.md).

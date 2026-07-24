@@ -1,241 +1,130 @@
 # Deployment Guide
 
-> **Status:** Target deployment procedure. No public URL or hosted application
-> status is asserted here. Verified outcomes belong in
-> [DEPLOYMENT_REPORT.md](DEPLOYMENT_REPORT.md).
+This guide describes the reproducible release path used by Supplier Compliance
+Workspace. Verified outcomes are in [DEPLOYMENT_REPORT.md](DEPLOYMENT_REPORT.md).
 
-## Deployment principles
-
-- Use a dedicated Supabase project for this application.
-- Apply every database change through versioned SQL migrations.
-- Run database and security tests locally before pushing hosted changes.
-- Keep server secrets in provider-managed environment storage.
-- Deploy frontend, Edge Functions, and FastAPI as separately verifiable units.
-- Do not purchase or upgrade a service without explicit approval.
-- Stop before any operation that could damage unrelated resources.
-
-## Environment separation
+## Environments
 
 | Environment | Purpose | Data |
 | --- | --- | --- |
-| Local | Development and destructive reset tests | Generated fictional data only |
-| Preview | Pull-request UI/API checks where supported | Isolated fictional fixtures |
-| Hosted portfolio | Stable recruiter demonstration | Fictional seeded organizations and users |
+| Local | Destructive reset, integration, and worker tests | Synthetic fixtures |
+| Hosted portfolio | Recruiter demonstration | Synthetic seeded organizations |
 
-Production-like does not mean production-used. The public portfolio environment
-must continue to be described as a reference implementation.
+The hosted portfolio is a reference implementation, not a customer production
+system.
 
-## Required tooling
+## Configuration
 
-- Node.js and npm versions pinned by repository metadata
-- Python version pinned by service metadata
-- Supabase CLI
-- Docker with Compose
-- Git
-- authenticated Supabase CLI
-- authenticated frontend host, if available
-- authenticated container host, if available
-- authenticated GitHub CLI, if publication is requested
-
-Record exact versions in the deployment report.
-
-## Environment variables
-
-Only names and purpose belong in documentation:
+Commit only `.env.example`. Required variable groups are:
 
 | Variable | Consumer | Sensitivity |
 | --- | --- | --- |
 | `VITE_SUPABASE_URL` | Web | Publishable |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Web | Publishable |
 | `VITE_API_BASE_URL` | Web | Publishable |
-| `SUPABASE_URL` | FastAPI and functions | Configuration |
-| `SUPABASE_SECRET_KEY` | FastAPI only | Secret |
-| `INTERNAL_API_TOKEN` | Edge/worker to FastAPI | Secret |
-| `DEMO_BUYER_ADMIN_EMAIL` | Seed tooling | Private configuration |
-| `DEMO_BUYER_ADMIN_PASSWORD` | Seed tooling | Secret |
-| `DEMO_SUPPLIER_ADMIN_EMAIL` | Seed tooling | Private configuration |
-| `DEMO_SUPPLIER_ADMIN_PASSWORD` | Seed tooling | Secret |
+| `SUPABASE_URL` | API and functions | Configuration |
+| `SUPABASE_SECRET_KEY` | FastAPI | Secret |
+| `INTERNAL_API_TOKEN` | FastAPI and queue dispatcher | Secret |
+| `INTERNAL_FUNCTION_TOKEN` | Queue function | Secret |
 | `ALLOWED_ORIGINS` | Edge and API | Configuration |
+| `E2E_*_PASSWORD` | Test user setup | Secret |
 
-Do not commit actual values. Prefer platform secret stores over plaintext files.
-
-## Local rollout
-
-The intended sequence, after implementation exists:
+## Local verification
 
 ```bash
 cp .env.example .env
-supabase start
-supabase db reset
-supabase test db
-
-npm ci
-npm run format:check
-npm run lint
-npm run typecheck
-npm test
-
-python -m venv services/api/.venv
-services/api/.venv/bin/pip install -r services/api/requirements-dev.txt
-services/api/.venv/bin/python -m pytest services/api
-
+make setup
+make db-start
+make db-reset
+make test
+make build
+node scripts/verify-platform.mjs
 docker compose build
 docker compose up -d
 ```
 
-Verify local Auth, database, functions, Storage, web, and FastAPI health before
-hosted deployment.
+Verify the API endpoints:
+
+```bash
+curl --fail http://127.0.0.1:8001/health
+curl --fail http://127.0.0.1:8001/ready
+curl --fail http://127.0.0.1:8001/version
+```
+
+Stop services cleanly:
+
+```bash
+docker compose down
+```
 
 ## Supabase rollout
 
-1. Confirm the linked project is dedicated to Supplier Compliance Workspace.
-2. Compare local and remote migration histories.
-3. Review SQL for destructive operations and grants.
-4. Run local reset and pgTAP.
-5. Push migrations.
-6. Create private evidence and report buckets through migrations or documented
-   idempotent setup.
-7. Deploy shared Edge Function code and each function.
-8. Store function secrets through Supabase secret management.
-9. Configure durable queues and bounded consumers.
-10. Configure low-frequency Cron reminders and cleanup.
-11. Configure private Realtime authorization.
-12. Generate TypeScript database types from the hosted schema.
-13. Seed fictional data through controlled tooling.
-14. Verify RLS and field confidentiality using real hosted user sessions.
+1. Confirm the CLI is linked to the dedicated project.
+2. Review migrations and run a clean local reset.
+3. Run `supabase test db`.
+4. Push migrations and inspect remote migration history.
+5. Configure environment-controlled fictional Auth users.
+6. Store function secrets through Supabase secret management.
+7. Deploy each Edge Function.
+8. Verify private buckets, queue definitions, Cron schedules, and Realtime
+   authorization.
+9. Run hosted pgTAP and `scripts/verify-hosted.mjs`.
+10. Set the Auth Site URL and exact callback allowlist.
 
-Example command shapes:
+Never reset a hosted project or expose its database password.
+
+## Web rollout
+
+The production build includes only publishable browser values.
 
 ```bash
-supabase link --project-ref "$SUPABASE_PROJECT_REF"
-supabase db push --dry-run
-supabase db push
-supabase functions deploy
-supabase gen types typescript --linked
+npm ci --prefix packages/contracts
+npm ci --prefix apps/web
+npm run build --prefix packages/contracts
+npm run build:sites --prefix apps/web
+node scripts/check-secrets.mjs
 ```
 
-The project reference and secrets must not be committed.
+The validated source is committed, pushed to the Sites source repository,
+packaged, saved as a version, and then deployed. After deployment:
+
+1. confirm the root and SPA deep links return HTML
+2. verify Auth redirects
+3. run desktop and mobile Playwright against the public URL
+4. recapture credential-free screenshots
 
 ## FastAPI rollout
 
-The target deployment is a container with:
+Deploy `services/api/Dockerfile` only to an authenticated container provider.
+Set secrets in the provider manager, never in image layers or source.
 
-- nonroot runtime user
-- pinned dependencies
-- health and readiness endpoints
-- memory and CPU limits where supported
-- server-only Supabase and internal credentials
-- structured logs
-- outbound timeouts
+Required checks:
 
-Verification:
+- container runs as the nonroot `app` user
+- `/health`, `/ready`, and `/version` pass
+- internal endpoints reject missing or invalid credentials
+- Supabase service credentials remain server-only
+- timeouts and resource limits are configured
 
-```bash
-curl --fail --silent "$API_URL/health"
-curl --fail --silent "$API_URL/ready"
-curl --fail --silent "$API_URL/version"
-```
-
-If no authenticated provider is available, build and run the image locally,
-record the exact blocker, and do not claim a public API deployment.
-
-## Frontend rollout
-
-1. Build with publishable Supabase configuration only.
-2. Scan generated assets for server credentials.
-3. Deploy to an authenticated static host.
-4. Configure Supabase Auth Site URL and approved redirects.
-5. Set the allowed frontend origin in Edge and FastAPI configuration.
-6. Test protected routes, refresh behavior, and organization switching.
-
-```bash
-npm --workspace apps/web run build
-npm --workspace apps/web run preview
-```
-
-If no authenticated provider is available, retain a verified production build
-and document the blocker.
-
-## Queue and Cron rollout
-
-Before enabling schedules:
-
-- create queues idempotently
-- set visibility timeout above expected worker duration
-- set bounded maximum attempts
-- configure dead-letter retention and review ownership
-- ensure job payloads contain no protected content
-- verify idempotency with duplicate messages
-- use a conservative Cron frequency
-- alert on growing queue age and dead-letter count
-
-## Realtime rollout
-
-- authorize private channel joins through database policy
-- broadcast only minimal status events
-- test buyer, supplier, unrelated party, and suspended relationship
-- verify reconnect triggers authoritative refetch
-
-## Storage rollout
-
-- confirm buckets are private
-- test list, upload, download, replacement, and delete separately
-- verify exact-record signed URL generation
-- verify arbitrary path and cross-relationship denial
-- use short expirations
-- inspect object paths for sanitized filenames and correct relationship IDs
-
-## Release gates
-
-Publication requires:
-
-- local quality gates pass
-- hosted RLS and private-field tests pass
-- Storage and signed URL checks pass
-- Edge, API, web, and E2E checks pass
-- secret and dependency scans pass
-- screenshots contain no credentials or signed URLs
-- README status matches reality
-- deployment and test reports are updated
+After deployment, update `INTERNAL_API_URL` for Edge Functions and rerun the
+hosted queue and report workflow. Until then, the placeholder URL is
+intentionally non-routable.
 
 ## Rollback
 
-### Application
+- Redeploy the previous saved web version.
+- Prefer forward-only corrective SQL migrations.
+- Pause queue consumers without deleting messages.
+- Preserve assessments, document versions, findings, decisions, and audit
+  history.
+- Never reset hosted data without explicit approval and a recovery plan.
 
-- Redeploy the last verified frontend and API artifacts.
-- Keep database migrations forward-only where possible.
-- Disable a faulty Edge Function or Cron schedule without deleting historical
-  data.
+## Release gates
 
-### Database
-
-- Prefer a corrective migration.
-- Do not reset or restore a hosted project without explicit approval and a
-  verified backup plan.
-- Preserve program versions, submitted snapshots, evidence versions, findings,
-  decisions, and audit events.
-
-### Queue
-
-- Pause consumers.
-- Preserve messages and dead-letter metadata.
-- Fix idempotency or processing code.
-- Replay only a bounded, reviewed set.
-
-## Post-deployment smoke test
-
-1. Sign in as buyer administrator.
-2. Open the Apex dashboard.
-3. Invite a supplier.
-4. Accept as Nova.
-5. Complete and submit an assessment.
-6. Upload and retrieve an authorized private document.
-7. Review, replace evidence, raise a finding, and submit corrective action.
-8. Record a conditional approval.
-9. Generate a demonstration report.
-10. Confirm a reminder job creates a notification.
-11. Confirm Greenline cannot access Nova data or files.
-12. Confirm Nova cannot access buyer-internal fields.
-
-Record evidence in [DEPLOYMENT_REPORT.md](DEPLOYMENT_REPORT.md), not in commit
-messages or unsupported claims.
+- local and hosted pgTAP pass
+- Edge, API, frontend, and browser tests pass
+- private Storage and Realtime denial cases pass
+- dependency and secret scans pass
+- Docker images build and reach healthy state
+- README, test report, and deployment report match observed reality
+- no paid plan or billing change is accepted without approval
