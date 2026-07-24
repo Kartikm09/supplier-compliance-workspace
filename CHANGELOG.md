@@ -26,8 +26,8 @@ The format follows Keep a Changelog principles.
 
 ### Security
 
-- Upgraded and pinned container `pip` to 26.1.2 after audit findings affected
-  the older installer.
+- Upgraded and pinned container `pip` to 26.1.2 and `setuptools` to 83.0.0
+  after audit findings affected older build tools.
 - Restricted supplier reads to protected views.
 - Added neutral frontend handling for authorization and not-found errors.
 - Excluded local dependencies and compiler metadata from Docker contexts.

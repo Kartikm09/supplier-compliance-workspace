@@ -24,6 +24,7 @@
 | pip-audit | Local | 1 | 0 | 1 local package |
 | Secret scan | Standard build | 293 files | 0 findings | 0 |
 | Containers | Local Docker | 2 healthy images | 0 | 0 |
+| GitHub Actions CI | Hosted runner | 4 jobs | 0 | 0 |
 
 The single browser skip is intentional: the mobile-navigation assertion is
 skipped in the desktop project and executed successfully in the mobile project.
@@ -65,6 +66,8 @@ docker compose up -d
 
 Hosted pgTAP used an SSL connection to the dedicated project. Hosted browser
 tests used the public Sites URL and real hosted Auth sessions.
+GitHub Actions repeated web, API, database/Edge, and container gates using
+Node 24-compatible official action runtimes.
 
 ## What was exercised
 

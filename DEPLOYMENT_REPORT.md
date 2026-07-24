@@ -19,7 +19,8 @@
 | Private Realtime | Verified | Authorized Broadcast delivered; cross-tenant join denied |
 | Queues and Cron | Schema deployed | Hosted worker completion blocked by missing public FastAPI |
 | FastAPI image | Built and healthy | Local Docker only |
-| GitHub repository | Publication pending in this report revision | Updated after remote verification |
+| GitHub repository | Public and verified | [Kartikm09/supplier-compliance-workspace](https://github.com/Kartikm09/supplier-compliance-workspace) |
+| GitHub Actions | Passing | Web, API, database/Edge, and container jobs |
 | Secret review | Passed | Standard and Sites source/build scans |
 
 ## Frontend deployment

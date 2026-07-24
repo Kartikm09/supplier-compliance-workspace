@@ -135,8 +135,9 @@ secret scan: 293 standard-build files and 296 Sites-build files, 0 findings
 
 The local unpublished `supplier-compliance-api` package is not on PyPI and was
 the only `pip-audit` skip. The Python installer was upgraded from a vulnerable
-workstation version to fixed `pip 26.1.2`, and the container pins the same
-release.
+workstation version to fixed `pip 26.1.2`; build tooling is pinned to
+`setuptools 83.0.0`. The container and security workflow install the same fixed
+versions before application dependencies.
 
 ## Browser bundle review
 

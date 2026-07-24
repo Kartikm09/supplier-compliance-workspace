@@ -10,7 +10,9 @@ RUN addgroup --system app && adduser --system --ingroup app app
 
 COPY pyproject.toml README.md ./
 COPY src ./src
-RUN python -m pip install --no-cache-dir --upgrade pip==26.1.2 \
+RUN python -m pip install --no-cache-dir --upgrade \
+      pip==26.1.2 \
+      setuptools==83.0.0 \
     && pip install --no-cache-dir .
 
 USER app

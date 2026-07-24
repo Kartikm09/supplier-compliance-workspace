@@ -1,6 +1,9 @@
 # Supplier Compliance Workspace
 
+[![CI](https://github.com/Kartikm09/supplier-compliance-workspace/actions/workflows/ci.yml/badge.svg)](https://github.com/Kartikm09/supplier-compliance-workspace/actions/workflows/ci.yml)
+
 [Live application](https://supplier-compliance-workspace.zw386.chatgpt.site) |
+[GitHub repository](https://github.com/Kartikm09/supplier-compliance-workspace) |
 [Architecture](ARCHITECTURE.md) |
 [Test evidence](TEST_REPORT.md) |
 [Deployment status](DEPLOYMENT_REPORT.md)
