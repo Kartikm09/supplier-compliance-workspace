@@ -1,0 +1,14 @@
+{
+  "browser": "149.0.7827.55",
+  "playwright": "1.61.1",
+  "platform": "darwin-arm64",
+  "locale": "en-GB",
+  "timezone": "UTC",
+  "clock": "2026-09-18T09:00:00Z",
+  "font": "Bundled Liberation Sans (SIL OFL 1.1; exact files in public/reviewer-fonts)",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "fixture": "apex-reviewer / apex-2 / draft"
+}

@@ -1,0 +1,172 @@
+@font-face {
+  font-family: "Reviewer Liberation Sans";
+  src: url("/reviewer-fonts/LiberationSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Reviewer Liberation Sans";
+  src: url("/reviewer-fonts/LiberationSans-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+:root {
+  font-family: "Reviewer Liberation Sans", sans-serif;
+  color: #19352d;
+  background: #f3f4ed;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+.reviewer-lab {
+  max-width: 1400px;
+  margin: auto;
+  padding: 48px;
+}
+header {
+  max-width: 900px;
+}
+h1 {
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  margin: 12px 0;
+  letter-spacing: -0.04em;
+}
+h2 {
+  font-size: 1.45rem;
+  margin-top: 0;
+}
+h3 {
+  font-size: 1rem;
+}
+p,
+blockquote {
+  line-height: 1.6;
+}
+.lab-eyebrow {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #496451;
+  font-weight: bold;
+}
+.lab-toolbar {
+  display: flex;
+  gap: 24px;
+  margin: 32px 0;
+}
+label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+input,
+select,
+textarea {
+  font: inherit;
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid #8e9f93;
+  border-radius: 4px;
+  color: inherit;
+  background: white;
+}
+.lab-toolbar label {
+  flex: 1;
+}
+.lab-grid {
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) minmax(0, 2fr);
+  gap: 24px;
+}
+.lab-grid > nav,
+.lab-grid > section {
+  padding: 24px;
+  border: 1px solid #bdc8bb;
+  border-radius: 8px;
+  background: #fff;
+  min-width: 0;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  margin: 12px 0;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid #587360;
+  background: #f5f7f1;
+  color: #19352d;
+  padding: 12px 16px;
+  border-radius: 4px;
+  text-align: left;
+}
+nav button {
+  width: 100%;
+}
+button[aria-current] {
+  background: #e5ecdc;
+  border-color: #254e37;
+  box-shadow: inset 4px 0 #254e37;
+}
+small {
+  display: block;
+  margin-top: 8px;
+  text-transform: capitalize;
+}
+.lab-actions button {
+  background: #254e37;
+  color: white;
+}
+button:disabled {
+  opacity: 0.65;
+}
+:focus-visible {
+  outline: 3px solid #9c5800;
+  outline-offset: 4px;
+}
+blockquote {
+  margin: 24px 0;
+  padding: 20px;
+  background: #f4f6ef;
+  border-left: 4px solid #839c69;
+}
+aside {
+  border: 1px solid #c4cfc0;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+[role="alert"] {
+  color: #8d251c;
+}
+footer {
+  margin-top: 32px;
+  font-size: 0.85rem;
+  color: #496451;
+}
+@media (max-width: 600px) {
+  .reviewer-lab {
+    padding: 20px;
+  }
+  .lab-grid {
+    grid-template-columns: 1fr;
+  }
+  .lab-toolbar {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .lab-grid > nav,
+  .lab-grid > section {
+    padding: 20px;
+  }
+}

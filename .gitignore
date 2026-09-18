@@ -21,3 +21,6 @@ test-results/
 *.log
 *.pem
 *.key
+
+# Generated local rendering comparison
+apps/web/public/generated-review.html
