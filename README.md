@@ -269,3 +269,7 @@ access can be granted through the controlled invitation flow.
 - Realtime is an invalidation mechanism; PostgreSQL remains authoritative.
 - No customer, employer, client, or platform commissioned or endorsed this
   project.
+
+## Local reviewer laboratory
+
+[Run the synthetic reviewer laboratory](docs/REVIEWER_LAB.md) for an additive React/TypeScript and FastAPI exercise covering stale responses, tenant/role policies, keyboard approval, rendering modes and pinned browser captures. Fixture identities are public selectors, not deployable authentication. This entry is separate from the hosted Supabase application.

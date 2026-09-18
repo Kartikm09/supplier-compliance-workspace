@@ -70,3 +70,29 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: docker compose build
+
+  reviewer-lab:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble@sha256:5b8f294aff9041b7191c34a4bab3ac270157a28774d4b0660e9743297b697e48
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+      - run: apt-get update && apt-get install -y --no-install-recommends python3-venv
+      - run: npm ci --ignore-scripts --prefix packages/contracts
+      - run: npm ci --ignore-scripts --prefix apps/web
+      - run: npm ci --ignore-scripts --prefix tests/e2e
+      - run: python3 -m venv services/api/.venv && services/api/.venv/bin/pip install -e services/api
+      - run: cd tests/e2e && npm exec -- playwright test --config playwright.reviewer.config.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reviewer-lab-evidence
+          path: |
+            tests/e2e/artifacts
+            tests/e2e/test-results
+            docs/screenshots/reviewer

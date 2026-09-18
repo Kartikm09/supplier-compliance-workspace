@@ -65,3 +65,7 @@ docker-build:
 verify: lint typecheck web-test edge-test api-test build
 	$(NPM) --prefix apps/web audit --audit-level=high
 	$(PYTHON) docs/validation/validate_portfolio_slice.py
+
+.PHONY: reviewer-test
+reviewer-test:
+	cd tests/e2e && $(NPM) exec -- playwright test --config playwright.reviewer.config.ts

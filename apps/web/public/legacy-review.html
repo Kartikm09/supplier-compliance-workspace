@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Legacy supplier review fixture</title>
+    <style>
+      body {
+        font-family: "Liberation Sans", sans-serif;
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #f3f4ed;
+        color: #19352d;
+      }
+      button {
+        font: inherit;
+        padding: 16px;
+        background: #254e37;
+        color: white;
+      }
+      :focus-visible {
+        outline: 3px solid #9c5800;
+        outline-offset: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Legacy evidence review</h1>
+      <p>This is a synthetic HTML/CSS comparison fixture.</p>
+      <h2>Nova material declaration</h2>
+      <p>Recycled resin content: 40%.</p>
+      <p role="status">Draft</p>
+      <button>Approve legacy case</button>
+    </main>
+    <script>
+      const variant = new URLSearchParams(location.search).get("variant");
+      if (variant === "screenshot") {
+        document.body.innerHTML =
+          '<img alt="Screenshot of an approval interface, without interactive controls" src="/legacy-interface.svg">';
+      } else if (variant !== "no-op")
+        document.querySelector("button").addEventListener("click", () => {
+          document.querySelector('[role="status"]').textContent = "Approved";
+        });
+    </script>
+  </body>
+</html>
