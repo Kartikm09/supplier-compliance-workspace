@@ -14,6 +14,7 @@ Baseline commit: `709020679a847da2fb8e89c08f2953e325c8d913`.
 | Dedicated Playwright lab | not present | 10 passed |
 | Local Cloudflare Sites build | not run | passed |
 | npm dependency audit | 12 advisories: 9 high, 3 moderate | 0 advisories |
+| Python dependency audit | known advisories in pip, pypdf, httpcore2 and httpx2 | 0 known advisories (local runtime + dev environment) |
 | Secret scanner and documentation validator | passed | passed |
 
 The browser run used Playwright 1.61.1, Chromium 149.0.7827.55 on macOS arm64,
@@ -45,9 +46,16 @@ Vite 6/7/8 support. Its named local container-image feature is opt-in and the
 repository configuration does not enable it. The normal and Sites builds both
 passed; no deployment command was run.
 
+The Python audit also exposed existing runtime and development-tool advisories.
+The bounded fixes are pypdf 6.16.1, httpx2 2.12.0 (including its fixed httpcore2
+transport), and pip 26.2.1 in the container and security job. The security job now
+audits the declared development dependencies as well as the runtime.
+
 Official release notes: [React Router](https://github.com/remix-run/react-router/releases/tag/react-router%407.18.4),
 [Vitest](https://github.com/vitest-dev/vitest/releases/tag/v4.1.11),
-[Cloudflare Vite plugin](https://github.com/cloudflare/workers-sdk/releases/tag/%40cloudflare%2Fvite-plugin%401.55.0).
+[Cloudflare Vite plugin](https://github.com/cloudflare/workers-sdk/releases/tag/%40cloudflare%2Fvite-plugin%401.55.0),
+[pypdf](https://github.com/py-pdf/pypdf/releases/tag/6.16.1),
+[HTTPX2](https://pypi.org/project/httpx2/2.12.0/), and [pip](https://pip.pypa.io/en/stable/news/).
 
 ## Limits
 
