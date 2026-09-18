@@ -87,7 +87,7 @@ jobs:
       - run: npm ci --ignore-scripts --prefix apps/web
       - run: npm ci --ignore-scripts --prefix tests/e2e
       - run: python3 -m venv services/api/.venv && services/api/.venv/bin/pip install -e services/api
-      - run: make reviewer-test
+      - run: cd tests/e2e && npm exec -- playwright test --config playwright.reviewer.config.ts
       - uses: actions/upload-artifact@v4
         if: always()
         with:
